@@ -26,6 +26,7 @@ dependencies:
   - StateVar
   - vector
   - bytestring
+  - JuicyPixels
 
 library:
   source-dirs: src

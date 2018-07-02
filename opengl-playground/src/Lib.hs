@@ -6,24 +6,81 @@ module Lib
 
 import Control.Monad (unless, when, void)
 import Data.Maybe (fromJust)
+import Data.Monoid
 import Data.StateVar
 import Data.ByteString (ByteString)
+import qualified Data.ByteString as B (readFile)
 import qualified Data.Vector.Storable as V
-import Foreign.Storable (sizeOf)
-import Foreign.Ptr (Ptr, plusPtr, nullPtr)
+import Foreign.Storable
+import Foreign.Ptr (Ptr, plusPtr, nullPtr, castPtr)
 import System.Exit (exitFailure)
 import System.IO (IO)
--- GLFW-b, qualified for clarity
+
 import qualified Graphics.UI.GLFW as GLFW
 import qualified Graphics.Rendering.OpenGL as GL
 import qualified Graphics.Rendering.OpenGL.GL.BufferObjects as GL
--- gl, all types and funcs here will already start with "gl"
+
+import Texture
+
+
+data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !GL.GLfloat
+
+dummyVertex :: GL.Vertex3 GL.GLfloat
+dummyVertex = undefined
+
+instance Storable ShaderData where
+    sizeOf ~(ShaderData a b) = sizeOf a + sizeOf b
+    alignment ~(ShaderData _ x) = alignment x
+    peek ptr = ShaderData
+        <$> peek (castPtr ptr)
+        <*> peek (plusPtr ptr $ sizeOf dummyVertex)
+    poke ptr (ShaderData a b) = do
+        poke (castPtr ptr) a
+        poke (plusPtr ptr $ sizeOf dummyVertex) b
+
+reportError :: String -> Bool -> IO ()
+reportError str res = unless res $ putStrLn str >> exitFailure
+
+compileProgramFile :: FilePath -> FilePath -> IO GL.Program
+compileProgramFile vertexShaderFileName fragmenShaderFileName = do
+    vertexShaderText <- B.readFile vertexShaderFileName
+    fragmenShaderText <- B.readFile fragmenShaderFileName
+
+    compileProgram vertexShaderText fragmenShaderText
+
+compileProgram :: ByteString -> ByteString -> IO GL.Program
+compileProgram vertexShaderText fragmentShaderText = do
+    vertexShader <- GL.createShader GL.VertexShader
+    GL.shaderSourceBS vertexShader $= vertexShaderText
+    GL.compileShader vertexShader
+    get (GL.shaderInfoLog vertexShader) >>= putStrLn
+    GL.compileStatus vertexShader
+        >>= reportError "Vertec shader compilation FAILED."
+
+    fragmentShader <- GL.createShader GL.FragmentShader
+    GL.shaderSourceBS fragmentShader $= fragmentShaderText
+    GL.compileShader fragmentShader
+    get (GL.shaderInfoLog fragmentShader) >>= putStrLn
+    GL.compileStatus fragmentShader
+        >>= reportError "Fragmen shader compilation FAILED."
+
+    shaderProgram <- GL.createProgram
+    GL.attachShader shaderProgram vertexShader
+    GL.attachShader shaderProgram fragmentShader
+    GL.linkProgram shaderProgram
+    get (GL.programInfoLog shaderProgram) >>= putStrLn
+    GL.linkStatus shaderProgram
+        >>= reportError "Shader program compilation FAILED."
+    GL.currentProgram $= Just shaderProgram
+
+    GL.deleteObjectName vertexShader
+    GL.deleteObjectName fragmentShader
+    pure shaderProgram
 
 someFunc :: IO ()
 someFunc = do
     GLFW.init
     primaryMonitor <- fromJust <$> GLFW.getPrimaryMonitor
---    print primaryMonitor
     supportedVideoModes <- GLFW.getVideoModes primaryMonitor
     let (GLFW.VideoMode width height red green blue refreshRate) =
             maximum $ maximum supportedVideoModes
@@ -42,7 +99,8 @@ someFunc = do
     printErrorAndFail = print "Can't create window" >> exitFailure
 
     setAndloop window = do
-        putStrLn "alsdfjlaksjdflkajsdf "
+        putStrLn $ "sizeof " <> (show . sizeOf $ ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 1.0)
+        putStrLn $ "alignment " <> (show . alignment $ ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 1.0)
         GLFW.setKeyCallback window (Just callback)
         GLFW.makeContextCurrent (Just window)
 
@@ -53,37 +111,21 @@ someFunc = do
                     (V.length vertices * sizeOf (V.head vertices))
             GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
 
-        vertexShader <- GL.createShader GL.VertexShader
-        GL.shaderSourceBS vertexShader $= vertexShaderText
-        GL.compileShader vertexShader
-        verRes <- GL.compileStatus vertexShader
-        unless verRes $ putStrLn "vertec shader compilation FAILED"
-            >> exitFailure
-
-        fragmentShader <- GL.createShader GL.FragmentShader
-        GL.shaderSourceBS fragmentShader $= fragmentShaderText
-        GL.compileShader fragmentShader
-        fragRes <- GL.compileStatus fragmentShader
-        unless verRes $ putStrLn "fragmen shader compilation FAILED"
-            >> exitFailure
-
-        shaderProgram <- GL.createProgram
-        GL.attachShader shaderProgram vertexShader
-        GL.attachShader shaderProgram fragmentShader
-        GL.linkProgram shaderProgram
-        GL.linkStatus shaderProgram
-        GL.currentProgram $= Just shaderProgram
-
-        GL.deleteObjectName vertexShader
-        GL.deleteObjectName fragmentShader
-
         vao <- GL.genObjectName
         GL.bindVertexArrayObject $= Just vao
         GL.vertexAttribPointer (GL.AttribLocation 0)
             $= ( GL.ToFloat
-               , GL.VertexArrayDescriptor 3 GL.Float 0 (bufferOffset 0)
+               , GL.VertexArrayDescriptor 3 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset 0)
+               )
+        GL.vertexAttribPointer (GL.AttribLocation 1)
+            $= ( GL.ToFloat
+               , GL.VertexArrayDescriptor 1 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset $ sizeOf dummyVertex)
                )
         GL.vertexAttribArray (GL.AttribLocation 0) $= GL.Enabled
+        GL.vertexAttribArray (GL.AttribLocation 1) $= GL.Enabled
+
+        texture <- loadTexture "assets/M-6_preview.png"
+        compileProgram vertexShaderText fragmentShaderText
 
         loop window
 
@@ -97,13 +139,12 @@ someFunc = do
             GLFW.swapBuffers window
             loop window
 
-    vertices :: V.Vector (GL.Vertex3 GL.GLfloat)
+    vertices :: V.Vector ShaderData
     vertices = V.fromList
-        [ GL.Vertex3 (-1.0) (-1.0) 0.0
-        , GL.Vertex3 1.0 (-1.0) 0.0
-        , GL.Vertex3 0.0  1.0 0.0
+        [ ShaderData (GL.Vertex3 (-1.0) (-1.0) 0.0) 1.0
+        , ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 0.1
+        , ShaderData (GL.Vertex3 0.0  1.0 0.0) 0.5
         ]
-
 
     bufferOffset :: Integral a => a -> Ptr b
     bufferOffset = plusPtr nullPtr . fromIntegral
@@ -112,18 +153,22 @@ someFunc = do
     vertexShaderText =
         "#version 330 core\n\
         \layout (location = 0) in vec3 aPos;\n\
+        \layout (location = 1) in float colorMod;\n\
+        \out float color;\n\
         \void main()\n\
         \{\n\
         \    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n\
+        \    color = colorMod;\n\
         \}\n"
 
     fragmentShaderText :: ByteString
     fragmentShaderText =
         "#version 330 core\n\
+        \in float color; \n\
         \out vec4 FragColor;\n\
         \void main()\n\
         \{\n\
-        \    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n\
+        \    FragColor = vec4(1.0f, 0.5f, color, 1.0f);\n\
         \}\n"
 
 callback :: GLFW.KeyCallback
