@@ -23,14 +23,17 @@ import qualified Graphics.Rendering.OpenGL.GL.BufferObjects as GL
 import Texture
 
 
-data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !GL.GLfloat
+data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !(GL.Vertex2 GL.GLfloat)
 
 dummyVertex :: GL.Vertex3 GL.GLfloat
 dummyVertex = undefined
 
+dummyFloat :: GL.GLfloat
+dummyFloat = undefined
+
 instance Storable ShaderData where
     sizeOf ~(ShaderData a b) = sizeOf a + sizeOf b
-    alignment ~(ShaderData _ x) = alignment x
+    alignment ~(ShaderData _ _) = alignment dummyFloat
     peek ptr = ShaderData
         <$> peek (castPtr ptr)
         <*> peek (plusPtr ptr $ sizeOf dummyVertex)
@@ -99,11 +102,11 @@ someFunc = do
     printErrorAndFail = print "Can't create window" >> exitFailure
 
     setAndloop window = do
-        putStrLn $ "sizeof " <> (show . sizeOf $ ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 1.0)
-        putStrLn $ "alignment " <> (show . alignment $ ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 1.0)
         GLFW.setKeyCallback window (Just callback)
         GLFW.makeContextCurrent (Just window)
 
+        vao <- GL.genObjectName
+        GL.bindVertexArrayObject $= Just vao
         triangle <- GL.genObjectName
         GL.bindBuffer GL.ArrayBuffer $= Just triangle
         V.unsafeWith vertices $ \ptr -> do
@@ -111,21 +114,29 @@ someFunc = do
                     (V.length vertices * sizeOf (V.head vertices))
             GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
 
-        vao <- GL.genObjectName
-        GL.bindVertexArrayObject $= Just vao
         GL.vertexAttribPointer (GL.AttribLocation 0)
             $= ( GL.ToFloat
                , GL.VertexArrayDescriptor 3 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset 0)
                )
         GL.vertexAttribPointer (GL.AttribLocation 1)
             $= ( GL.ToFloat
-               , GL.VertexArrayDescriptor 1 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset $ sizeOf dummyVertex)
+               , GL.VertexArrayDescriptor 2 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset $ sizeOf dummyVertex)
                )
         GL.vertexAttribArray (GL.AttribLocation 0) $= GL.Enabled
         GL.vertexAttribArray (GL.AttribLocation 1) $= GL.Enabled
 
-        texture <- loadTexture "assets/M-6_preview.png"
-        compileProgram vertexShaderText fragmentShaderText
+        texture <- loadTexture "assets/tankBase.png"
+        -- GL.textureWrapMode GL.Texture2D GL.S $= (GL.Repeated, GL.Repeat)
+        -- GL.textureWrapMode GL.Texture2D GL.T $= (GL.Repeated, GL.Repeat)
+        GL.textureFilter GL.Texture2D $= ((GL.Linear', Nothing), GL.Linear')
+
+        prog <- compileProgram vertexShaderText fragmentShaderText
+
+        texUniformLoc <- get $ GL.uniformLocation prog "texture"
+        let val = 0 :: GL.GLint
+        GL.uniform texUniformLoc $= val
+        GL.activeTexture $= GL.TextureUnit 0
+        GL.textureBinding GL.Texture2D $= Just texture
 
         loop window
 
@@ -141,9 +152,9 @@ someFunc = do
 
     vertices :: V.Vector ShaderData
     vertices = V.fromList
-        [ ShaderData (GL.Vertex3 (-1.0) (-1.0) 0.0) 1.0
-        , ShaderData (GL.Vertex3 1.0 (-1.0) 0.0) 0.1
-        , ShaderData (GL.Vertex3 0.0  1.0 0.0) 0.5
+        [ ShaderData (GL.Vertex3 (0.5) (0.5) 0.0) $ GL.Vertex2 1.0 1.0
+        , ShaderData (GL.Vertex3 (0.5) (-0.5) 0.0) $ GL.Vertex2 1.0 0.0
+        , ShaderData (GL.Vertex3 (-0.5) (-0.5) 0.0) $ GL.Vertex2 0.0 0.0
         ]
 
     bufferOffset :: Integral a => a -> Ptr b
@@ -153,22 +164,23 @@ someFunc = do
     vertexShaderText =
         "#version 330 core\n\
         \layout (location = 0) in vec3 aPos;\n\
-        \layout (location = 1) in float colorMod;\n\
-        \out float color;\n\
+        \layout (location = 1) in vec2 cordIn;\n\
+        \out vec2 cord;\n\
         \void main()\n\
         \{\n\
         \    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n\
-        \    color = colorMod;\n\
+        \    cord = cordIn;\n\
         \}\n"
 
     fragmentShaderText :: ByteString
     fragmentShaderText =
         "#version 330 core\n\
-        \in float color; \n\
+        \in vec2 cord; \n\
+        \uniform sampler2D texture1;\n\
         \out vec4 FragColor;\n\
         \void main()\n\
         \{\n\
-        \    FragColor = vec4(1.0f, 0.5f, color, 1.0f);\n\
+        \    FragColor = vec4(texture(texture1, cord).rgb, 1.0f);\n\
         \}\n"
 
 callback :: GLFW.KeyCallback

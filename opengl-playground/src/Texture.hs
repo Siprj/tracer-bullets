@@ -21,6 +21,7 @@ loadTexture file = do
             (GL.TextureSize2D (fromIntegral imageWidth) (fromIntegral imageHeight))
             0
             (GL.PixelData GL.RGB GL.UnsignedByte ptr)
+    GL.generateMipmap' GL.Texture2D
     pure texture
 
 
