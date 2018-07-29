@@ -27,6 +27,11 @@ dependencies:
   - vector
   - bytestring
   - JuicyPixels
+  - parser-combinators
+  - attoparsec
+  - transformers
+  - containers
+  - lens
 
 library:
   source-dirs: src
