@@ -7,35 +7,18 @@
 
 module ObjLoader where
 
-import Prelude (realToFrac, undefined, fromIntegral)
+import Prelude ((-), realToFrac, undefined, fromIntegral)
 
 import Control.Applicative ((<*>), (*>), (<*), pure, some)
 import Control.Applicative.Combinators
 import Control.Lens
-import Control.Monad ((=<<), void)
-import Control.Monad.Trans.State.Strict
+import Control.Monad ((=<<), (>>=), void, fail)
 import Control.Monad.Trans.Class
-import Data.Bool ((||), not)
-import Data.Either (Either)
-import Data.Eq ((==))
-import Data.Foldable (toList)
-import Data.Function ((.), ($))
-import Data.Functor ((<$>), ($>))
-import Data.Int (Int)
-import Data.Maybe (Maybe(Nothing, Just))
-import Data.Map.Strict hiding (toList)
-import Data.Sequence (Seq)
-import Data.String (String)
-import Data.Traversable (mapM)
-import Graphics.Rendering.OpenGL
-    (GLint, GLfloat, Vertex3(Vertex3), Vertex2(Vertex2))
-import qualified Data.Vector.Storable as SV
-import qualified Data.Vector as V
-import System.IO (IO, FilePath)
+import Control.Monad.Trans.State.Strict
 import Data.Attoparsec.ByteString (Parser)
-import Text.Show (Show)
 import Data.Attoparsec.ByteString.Char8
-    ( anyChar
+    ( parseOnly
+    , anyChar
     , char
     , decimal
     , double
@@ -46,6 +29,27 @@ import Data.Attoparsec.ByteString.Char8
     , skipWhile
     , string
     )
+import Data.Bool ((||), not)
+import Data.ByteString (readFile)
+import Data.Either (Either, either)
+import Data.Eq ((==))
+import Data.Foldable (toList)
+import Data.Function ((.), ($))
+import Data.Functor ((<$>), ($>), fmap)
+import Data.Int (Int)
+import Data.Maybe (Maybe(Nothing, Just), maybe)
+import Data.Map.Strict hiding (toList)
+import Data.Monoid (mempty)
+import Data.Sequence (Seq, length)
+import Data.String (String)
+import Data.Traversable (mapM)
+import qualified Data.Vector.Storable as SV
+import qualified Data.Vector as V
+import Graphics.Rendering.OpenGL
+    (GLint, GLfloat, Vertex3(Vertex3), Vertex2(Vertex2))
+import System.IO (IO, FilePath)
+import Text.Show (Show)
+
 
 data Model = Model
     { vertices :: SV.Vector (Vertex3 GLfloat)
@@ -65,6 +69,14 @@ data ObjParserState = ObjParserState
     }
   deriving (Show)
 
+emptyObjParserState :: ObjParserState
+emptyObjParserState = ObjParserState
+    { _vertices' = mempty
+    , _textureUV' = mempty
+    , _vertexNormals' = mempty
+    , _faces' = mempty
+    }
+
 data Face = Face
     { v1 :: (Int, Maybe Int, Maybe Int)
     , v2 :: (Int, Maybe Int, Maybe Int)
@@ -81,29 +93,53 @@ data ObjConvertState = ObjConvertState
     , _convertedVertices :: Seq (Vertex3 GLfloat)
     , _convertedUV :: Seq (Vertex2 GLfloat)
     , _convertedNormals :: Seq (Vertex3 GLfloat)
-    , _indices' :: Seq (Int)
+    , _indices' :: Seq Int
     }
   deriving (Show)
+
+emptyObjConvertState :: ObjConvertState
+emptyObjConvertState = ObjConvertState
+    { _processed = mempty
+    , _convertedVertices = mempty
+    , _convertedUV = mempty
+    , _convertedNormals = mempty
+    , _indices' = mempty
+    }
 
 makeLenses ''ObjConvertState
 
 type ConvertorT = State ObjConvertState
 
-loadModel :: FilePath -> IO Model
-loadModel fileName = undefined
+readModel :: FilePath -> IO Model
+readModel fileName = do
+    res <- parseOnly (execStateT parseObjLines emptyObjParserState)
+        <$> readFile fileName
+    either fail (pure . convert) res
 
-convert :: ObjState -> Either String Model
-convert ObjState{..} = undefined
+-- TODO: error handling
+convert :: ObjParserState -> Model
+convert ObjParserState{..} =
+    toModel $ execState (mapM go _faces') emptyObjConvertState
   where
     go :: Face -> ConvertorT ()
-    go Face{..} = undefined
+    go Face{..} = do
+        goVector v1
+        goVector v2
+        goVector v3
 
     goVector :: (Int, Maybe Int, Maybe Int) -> ConvertorT ()
-    goVector k = do
+    goVector k@(v, t, n) = do
         ObjConvertState{..} <- get
         case _processed !? k of
-            Just i -> modify $ over indices' |> i
-            Nothing ->
+            Just i -> modify $ over indices' (|> i)
+            Nothing -> do
+                let index = length _convertedVertices
+                modify $ over indices' (|> index)
+                modify $ over convertedVertices (|> vertexVector V.! v)
+                maybe (pure ()) (\x -> modify $ over convertedUV
+                    (|> textureCoordinateVector V.! x)) t
+                maybe (pure ()) (\x -> modify $ over convertedNormals
+                    (|> normalVector V.! x)) n
 
     vertexVector :: V.Vector (Vertex3 GLfloat)
     vertexVector = V.fromList $ toList _vertices'
@@ -117,8 +153,19 @@ convert ObjState{..} = undefined
     faceVector :: V.Vector Face
     faceVector = V.fromList $ toList _faces'
 
+    -- TODO: error handling
     validateFaces :: V.Vector Face -> Either String ()
     validateFaces = undefined
+
+    toModel :: ObjConvertState -> Model
+    toModel ObjConvertState{..} = Model
+        { vertices = SV.fromList $ toList _convertedVertices
+        -- | This vector may be empty.
+        , textureUV = SV.fromList $ toList _convertedUV
+        -- | This vector may be empty.
+        , vertexNormals = SV.fromList $ toList _convertedNormals
+        , indices = SV.fromList . fmap fromIntegral $ toList _indices'
+        }
 
 
 parseObjLines :: ObjParser ()
@@ -128,7 +175,7 @@ parseObjLines = void $
     <|> parseNormal
     <|> parseFace
     <|> parseComment
-    <|> parseGroup
+    <|> parseUnsupported
     ) `sepBy` lift (some endOfLine)
   where
     parseVertex :: ObjParser ()
@@ -144,8 +191,8 @@ parseObjLines = void $
     parseComment = lift $ string "#" *>
         skipWhile (\c -> not $ c == '\r' || c == '\n')
 
-    parseGroup :: ObjParser ()
-    parseGroup = lift $ (string "g" <|> string "s") *>
+    parseUnsupported :: ObjParser ()
+    parseUnsupported = lift $ (string "g" <|> string "s" <|> string "o") *>
         skipWhile (\c -> not $ c == '\r' || c == '\n')
 
     parseTexture :: ObjParser ()
@@ -176,12 +223,18 @@ parseObjLines = void $
         modify (over faces' (|> f))
 
     parseFacePart :: Parser (Int, Maybe Int, Maybe Int)
-    parseFacePart = do
-        v <- decimal
-        t <- parseOptionalNumber
-        n <- parseOptionalNumber
-        pure (v, t, n)
+    parseFacePart = multiple <|> single
+      where
+        single = do
+            v <- (\v -> v - 1) <$> decimal
+            pure (v, Nothing, Nothing)
+
+        multiple = do
+            v <- (\v -> v - 1) <$> decimal
+            t <- parseOptionalNumber
+            n <- parseOptionalNumber
+            pure (v, t, n)
 
     parseOptionalNumber :: Parser (Maybe Int)
     parseOptionalNumber =
-        char '/' *> ((Just <$> decimal) <|> pure Nothing)
+        char '/' *> ((Just . (\v -> v - 1) <$> decimal) <|> pure Nothing)

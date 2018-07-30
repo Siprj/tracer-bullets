@@ -21,17 +21,19 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
   - base >= 4.7 && < 5
-  - GLFW-b
-  - OpenGL
-  - StateVar
-  - vector
-  - bytestring
-  - JuicyPixels
-  - parser-combinators
   - attoparsec
-  - transformers
+  - bytestring
   - containers
+  - GLFW-b
+  - JuicyPixels
   - lens
+  - OpenGL
+  - parser-combinators
+  - pretty-simple
+  - StateVar
+  - text
+  - transformers
+  - vector
 
 library:
   source-dirs: src
