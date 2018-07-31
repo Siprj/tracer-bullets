@@ -6,7 +6,7 @@ module Lib
     ) where
 
 import Control.Monad (unless, when, void)
-import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef)
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef, writeIORef)
 import Data.Maybe (fromJust)
 import Data.Monoid
 import Data.StateVar
@@ -161,9 +161,12 @@ someFunc = do
     printErrorAndFail = print "Can't create window" >> exitFailure
 
     setAndloop window = do
-        ref <- newIORef (0,0,0)
+        ref <- newIORef (0,0,-2)
+        proMatrixRef <- projectionMatrix 90 0.1 1000 1 >>= newIORef
         GLFW.setKeyCallback window (Just $ callback ref)
         GLFW.setScrollCallback window (Just $ callbackScrol ref)
+        GLFW.setWindowSizeCallback window
+            (Just $ callbackWindowSize proMatrixRef)
         GLFW.makeContextCurrent (Just window)
 
         readModel "pokus4.obj"  >>= (writeFile "/tmp/kwa" . show)
@@ -225,20 +228,21 @@ someFunc = do
         GL.currentProgram $= Just prog
         get GL.errors >>= print
 
-        proMatrix <- projectionMatrix 90 0.1 1000
 
-        loop proUniformLoc proMatrix texUniformLoc ref window lModel
 
-    loop proUniformLoc proMatrix texUniformLoc ref window model = do
+        loop proUniformLoc proMatrixRef texUniformLoc ref window lModel
+
+    loop proUniformLoc proMatrixRef texUniformLoc ref window model = do
         shouldClose <- GLFW.windowShouldClose window
         unless shouldClose $ do
             GLFW.pollEvents
---            GL.depthFunc $= Just GL.Less
+            GL.depthFunc $= Just GL.Less
             GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
-            GL.clear [GL.ColorBuffer]
+            GL.clear [GL.ColorBuffer, GL.DepthBuffer]
             (v1, v2, v3) <- readIORef ref
             transMat <- GL.newMatrix GL.ColumnMajor
                 [1,0,0,0, 0,1,0,0, 0,0,1,0, v1,v2,v3,1] :: IO (GL.GLmatrix GL.GLfloat)
+            proMatrix <- readIORef proMatrixRef
             GL.uniform texUniformLoc $= transMat
             GL.uniform proUniformLoc $= proMatrix
             GL.bindVertexArrayObject $= Just (modelVAO model)
@@ -246,7 +250,7 @@ someFunc = do
             GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt (bufferOffset 0)
 --            get GL.errors >>= print
             GLFW.swapBuffers window
-            loop proUniformLoc proMatrix texUniformLoc ref window model
+            loop proUniformLoc proMatrixRef texUniformLoc ref window model
 
     vertices :: V.Vector ShaderData
     vertices = V.fromList
@@ -284,14 +288,43 @@ projectionMatrix
     :: GL.GLfloat
     -> GL.GLfloat
     -> GL.GLfloat
+    -> GL.GLfloat
     -> IO (GL.GLmatrix GL.GLfloat)
-projectionMatrix fov near far =
-    GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s,0,0, 0,0,v1,v2, 0,0,-1,0]
+projectionMatrix fov near far windowRation =
+    GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s',0,0, 0,0,v1,-1, 0,0,v2,0]
   where
-    s = 1/tan((fov * pi) /360)
-    v1 = negate (far/(far - near))
-    v2 = negate ((far * near)/(far - near))
+    fovRad = (pi * fov)/180
+    tanHalf = tan(fovRad / 2)
+    s = 1 / (tanHalf * windowRation)
+    s' = 1 / tanHalf
+    v1 = far / (near - far)
+    v2 = (-(far * near)) / (far - near)
 
+---- | `fov` stands for field of view
+--projectionMatrix
+--    :: GL.GLfloat
+--    -> GL.GLfloat
+--    -> GL.GLfloat
+--    -> GL.GLfloat
+--    -> IO (GL.GLmatrix GL.GLfloat)
+--projectionMatrix fov near far windowRation =
+--    GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s',0,0, 0,0,v1,-1, 0,0,v2,0]
+--  where
+--    fovRad = (pi * fov)/180
+--    tanHalf = tan(fovRad / 2)
+--    s = 1 / (tanHalf * windowRation)
+--    s' = 1 / tanHalf
+--    v1 = (-(far + near))/ (far - near)
+--    v2 = (- (2 * far * near))/(far -near)
+
+callbackWindowSize :: IORef (GL.GLmatrix GL.GLfloat) -> GLFW.WindowSizeCallback
+callbackWindowSize ref _window w h = do
+    print "width: "
+    print w
+    print "height: "
+    print h
+    GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral w) (fromIntegral h))
+    projectionMatrix 90 0.01 100 (fromIntegral w / fromIntegral h) >>= writeIORef ref
 
 callbackScrol
     :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat)
