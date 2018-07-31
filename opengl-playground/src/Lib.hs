@@ -161,7 +161,7 @@ someFunc = do
     printErrorAndFail = print "Can't create window" >> exitFailure
 
     setAndloop window = do
-        ref <- newIORef (0,0,-2)
+        ref <- newIORef (0,0,-20)
         proMatrixRef <- projectionMatrix 90 0.1 1000 1 >>= newIORef
         GLFW.setKeyCallback window (Just $ callback ref)
         GLFW.setScrollCallback window (Just $ callbackScrol ref)
@@ -187,6 +187,7 @@ someFunc = do
         unless shouldClose $ do
             GLFW.pollEvents
             GL.depthFunc $= Just GL.Less
+            GL.cullFace $= Just GL.Back
             GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
             GL.clear [GL.ColorBuffer, GL.DepthBuffer]
             (v1, v2, v3) <- readIORef ref
@@ -268,7 +269,7 @@ callbackScrol
     -> GLFW.ScrollCallback
 callbackScrol ref window scrollX scrollY = do
     act <- atomicModifyIORef' ref
-        $ \(x, y, z) -> (((x, y, z + ((realToFrac scrollY) / 50)), (x, y, z)))
+        $ \(x, y, z) -> (((x, y, z + ((realToFrac scrollY) / 5)), (x, y, z)))
     print act
 
 callback :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat) -> GLFW.KeyCallback
