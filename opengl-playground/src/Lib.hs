@@ -169,8 +169,7 @@ someFunc = do
             (Just $ callbackWindowSize proMatrixRef)
         GLFW.makeContextCurrent (Just window)
 
-        readModel "pokus4.obj"  >>= (writeFile "/tmp/kwa" . show)
-        lModel <- readModel "pokus.obj" >>= loadModel
+        lModel <- readModel "assets/hoverTank.obj" >>= loadModel
         print "model loaded"
 
         prog <- compileProgramFile "shader/vertex.vert" "shader/fragment.frag"
@@ -195,7 +194,7 @@ someFunc = do
                 [1,0,0,0, 0,1,0,0, 0,0,1,0, v1,v2,v3,1] :: IO (GL.GLmatrix GL.GLfloat)
             proMatrix <- readIORef proMatrixRef
             time <- fromJust <$> GLFW.getTime
-            rotMat <- rotationMatrix (realToFrac time) 0 0 1
+            rotMat <- rotationMatrix (realToFrac time) 0 1 0
 
             GL.uniform texUniformLoc $= transMat
             GL.uniform proUniformLoc $= proMatrix
@@ -205,6 +204,10 @@ someFunc = do
 --            get GL.errors >>= print
             GLFW.swapBuffers window
             loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model
+
+crateUnitMatrix :: IO (GL.GLmatrix GL.GLfloat)
+crateUnitMatrix =
+    GL.newMatrix GL.ColumnMajor [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
 
 -- | `fov` stands for field of view
 projectionMatrix
@@ -240,12 +243,12 @@ rotationMatrix angle x y z =
       angleCos = cos angle
       angleSin = sin angle
       a11 = angleCos + x * x * (1 - angleCos)
-      a21 = x * y * (1 - angleCos) + x * angleSin
+      a21 = x * y * (1 - angleCos) + z * angleSin
       a31 = x * z * (1 - angleCos) - y * angleSin
 
       a12 = x * y * (1 - angleCos) - z * angleSin
       a22 = angleCos + y * y  * (1 - angleCos)
-      a32 = y * z * (1 - angleCos) - x * angleSin
+      a32 = y * z * (1 - angleCos) + x * angleSin
 
       a13 = x * z * (1 - angleCos) + y * angleSin
       a23 = y * z * (1 - angleCos) - x * angleSin
