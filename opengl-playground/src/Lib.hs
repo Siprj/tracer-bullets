@@ -171,68 +171,19 @@ someFunc = do
 
         readModel "pokus4.obj"  >>= (writeFile "/tmp/kwa" . show)
         lModel <- readModel "pokus.obj" >>= loadModel
---        lModel <- loadModel Model
---            { vertices = V.fromList
---                [ GL.Vertex3 (0.5) (0.5) 0.0
---                , GL.Vertex3 (0.5) (-0.5) 0.0
---                , GL.Vertex3 (-0.5) (-0.5) 0.0
---                , GL.Vertex3 (-0.5) (0.5) 0.0
---                ]
---            -- | This vector may be empty.
---            , textureUV = mempty
---            -- | This vector may be empty.
---            , vertexNormals = mempty
---            , indices = V.fromList [0,1,3,1,2,3]
---            }
---        GL.bindVertexArrayObject $= Just (modelVAO lModel)
-
         print "model loaded"
 
---        vao <- GL.genObjectName
---        GL.bindVertexArrayObject $= Just vao
---        triangle <- GL.genObjectName
---        GL.bindBuffer GL.ArrayBuffer $= Just triangle
---        V.unsafeWith vertices $ \ptr -> do
---            let size = fromIntegral
---                    (V.length vertices * sizeOf (V.head vertices))
---            GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
---
---        GL.vertexAttribPointer (GL.AttribLocation 0)
---            $= ( GL.ToFloat
---               , GL.VertexArrayDescriptor 3 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset 0)
---               )
---        GL.vertexAttribPointer (GL.AttribLocation 1)
---            $= ( GL.ToFloat
---               , GL.VertexArrayDescriptor 2 GL.Float (fromIntegral . sizeOf $ V.head vertices) (bufferOffset $ sizeOf dummyVertex)
---               )
---        GL.vertexAttribArray (GL.AttribLocation 0) $= GL.Enabled
---        GL.vertexAttribArray (GL.AttribLocation 1) $= GL.Enabled
---
---        texture <- loadTexture "assets/tankBase.png"
---        -- GL.textureWrapMode GL.Texture2D GL.S $= (GL.Repeated, GL.Repeat)
---        -- GL.textureWrapMode GL.Texture2D GL.T $= (GL.Repeated, GL.Repeat)
---        GL.textureFilter GL.Texture2D $= ((GL.Linear', Nothing), GL.Linear')
---
---        prog <- compileProgram vertexShaderText fragmentShaderText
---
---        texUniformLoc <- get $ GL.uniformLocation prog "texture"
---        let val = 0 :: GL.GLint
---        GL.uniform texUniformLoc $= val
---        GL.activeTexture $= GL.TextureUnit 0
---        GL.textureBinding GL.Texture2D $= Just texture
-
-        prog <- compileProgram vertexShaderText fragmentShaderText
+        prog <- compileProgramFile "shader/vertex.vert" "shader/fragment.frag"
         texUniformLoc <- get $ GL.uniformLocation prog "transform"
         proUniformLoc <- get $ GL.uniformLocation prog "projection"
+        rotationUniformLoc <- get $ GL.uniformLocation prog "rotation"
         get GL.errors >>= print
         GL.currentProgram $= Just prog
         get GL.errors >>= print
 
+        loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window lModel
 
-
-        loop proUniformLoc proMatrixRef texUniformLoc ref window lModel
-
-    loop proUniformLoc proMatrixRef texUniformLoc ref window model = do
+    loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model = do
         shouldClose <- GLFW.windowShouldClose window
         unless shouldClose $ do
             GLFW.pollEvents
@@ -243,45 +194,17 @@ someFunc = do
             transMat <- GL.newMatrix GL.ColumnMajor
                 [1,0,0,0, 0,1,0,0, 0,0,1,0, v1,v2,v3,1] :: IO (GL.GLmatrix GL.GLfloat)
             proMatrix <- readIORef proMatrixRef
+            time <- fromJust <$> GLFW.getTime
+            rotMat <- rotationMatrix (realToFrac time) 0 0 1
+
             GL.uniform texUniformLoc $= transMat
             GL.uniform proUniformLoc $= proMatrix
+            GL.uniform rotationUniformLoc $= rotMat
             GL.bindVertexArrayObject $= Just (modelVAO model)
---            GL.drawArrays GL.Triangles 0 3
             GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt (bufferOffset 0)
 --            get GL.errors >>= print
             GLFW.swapBuffers window
-            loop proUniformLoc proMatrixRef texUniformLoc ref window model
-
-    vertices :: V.Vector ShaderData
-    vertices = V.fromList
-        [ ShaderData (GL.Vertex3 (0.5) (0.5) 0.0) $ GL.Vertex2 1.0 1.0
-        , ShaderData (GL.Vertex3 (0.5) (-0.5) 0.0) $ GL.Vertex2 1.0 0.0
-        , ShaderData (GL.Vertex3 (-0.5) (-0.5) 0.0) $ GL.Vertex2 0.0 0.0
-        ]
-
-
-    vertexShaderText :: ByteString
-    vertexShaderText =
-        "#version 330 core\n\
-        \layout (location = 0) in vec3 aPos;\n\
-        \uniform mat4 transform;\n\
-        \uniform mat4 projection;\n\
-        \out vec4 color;\n\
-        \void main()\n\
-        \{\n\
-        \    gl_Position = projection * transform * vec4(aPos, 1.0);\n\
-        \    color = vec4(1.0f, 0f, 1.0f, 1.0f);\n\
-        \}\n"
-
-    fragmentShaderText :: ByteString
-    fragmentShaderText =
-        "#version 330 core\n\
-        \in vec4 color; \n\
-        \out vec4 FragColor;\n\
-        \void main()\n\
-        \{\n\
-        \    FragColor = color;\n\
-        \}\n"
+            loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model
 
 -- | `fov` stands for field of view
 projectionMatrix
@@ -293,29 +216,40 @@ projectionMatrix
 projectionMatrix fov near far windowRation =
     GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s',0,0, 0,0,v1,-1, 0,0,v2,0]
   where
-    fovRad = (pi * fov)/180
+    fovRad = (pi * fov) / 180
     tanHalf = tan(fovRad / 2)
     s = 1 / (tanHalf * windowRation)
     s' = 1 / tanHalf
     v1 = far / (near - far)
     v2 = (-(far * near)) / (far - near)
 
----- | `fov` stands for field of view
---projectionMatrix
---    :: GL.GLfloat
---    -> GL.GLfloat
---    -> GL.GLfloat
---    -> GL.GLfloat
---    -> IO (GL.GLmatrix GL.GLfloat)
---projectionMatrix fov near far windowRation =
---    GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s',0,0, 0,0,v1,-1, 0,0,v2,0]
---  where
---    fovRad = (pi * fov)/180
---    tanHalf = tan(fovRad / 2)
---    s = 1 / (tanHalf * windowRation)
---    s' = 1 / tanHalf
---    v1 = (-(far + near))/ (far - near)
---    v2 = (- (2 * far * near))/(far -near)
+rotationMatrix
+    :: GL.GLfloat
+    -> GL.GLfloat
+    -> GL.GLfloat
+    -> GL.GLfloat
+    -> IO (GL.GLmatrix GL.GLfloat)
+rotationMatrix angle x y z =
+    GL.newMatrix GL.ColumnMajor
+        [ a11,a21,a31,0
+        , a12,a22,a32,0
+        , a13,a23,a33,0
+        , 0,0,0,1
+        ]
+  where
+      angleCos = cos angle
+      angleSin = sin angle
+      a11 = angleCos + x * x * (1 - angleCos)
+      a21 = x * y * (1 - angleCos) + x * angleSin
+      a31 = x * z * (1 - angleCos) - y * angleSin
+
+      a12 = x * y * (1 - angleCos) - z * angleSin
+      a22 = angleCos + y * y  * (1 - angleCos)
+      a32 = y * z * (1 - angleCos) - x * angleSin
+
+      a13 = x * z * (1 - angleCos) + y * angleSin
+      a23 = y * z * (1 - angleCos) - x * angleSin
+      a33 = angleCos + z * z * (1 - angleCos)
 
 callbackWindowSize :: IORef (GL.GLmatrix GL.GLfloat) -> GLFW.WindowSizeCallback
 callbackWindowSize ref _window w h = do
