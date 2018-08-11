@@ -28,12 +28,15 @@ dependencies:
   - JuicyPixels
   - lens
   - OpenGL
+  - OpenGLRaw
   - parser-combinators
   - pretty-simple
   - StateVar
   - text
   - transformers
   - vector
+  - dimensions
+  - easytensor
 
 library:
   source-dirs: src

@@ -1,5 +1,23 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE BangPatterns              #-}
+{-# LANGUAGE UndecidableInstances      #-}
+{-# LANGUAGE CPP                       #-}
+{-# LANGUAGE DataKinds                 #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE FlexibleContexts          #-}
+{-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE KindSignatures            #-}
+{-# LANGUAGE MagicHash                 #-}
+{-# LANGUAGE MultiParamTypeClasses     #-}
+{-# LANGUAGE PolyKinds                 #-}
+{-# LANGUAGE RecordWildCards           #-}
+{-# LANGUAGE ScopedTypeVariables       #-}
+{-# LANGUAGE TypeApplications          #-}
+{-# LANGUAGE TypeOperators             #-}
+{-# LANGUAGE TypeFamilies              #-}
+{-# LANGUAGE UnboxedSums               #-}
+{-# LANGUAGE UnboxedTuples             #-}
 
 module Lib
     ( someFunc
@@ -18,14 +36,79 @@ import Foreign.Ptr (Ptr, plusPtr, nullPtr, castPtr)
 import System.Exit (exitFailure)
 import System.IO (IO, writeFile)
 
+import Numeric.Dimensions
+import Numeric.DataFrame
+import Numeric.DataFrame.Internal.Array.Family hiding (inferPrim)
+import Numeric.Matrix
+import Numeric.Matrix.Class
+import Numeric.PrimBytes
+import GHC.Exts
+import GHC.Base (IO(..))
+import GHC.Ptr (Ptr(..))
+import GHC.ForeignPtr (ForeignPtr (..), ForeignPtrContents (..), unsafeForeignPtrToPtr)
+
+
 import qualified Graphics.UI.GLFW as GLFW
 import qualified Graphics.Rendering.OpenGL as GL
 import qualified Graphics.Rendering.OpenGL.GL.BufferObjects as GL
+import Graphics.Rendering.OpenGL.GL.Shaders.Uniform
+import Graphics.GL.Functions
+import Graphics.GL.Tokens
 
 import Texture
 import ObjLoader
 
 data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !(GL.Vertex2 GL.GLfloat)
+
+instance Uniform (Matrix GL.GLfloat 3 3) where
+    uniform (UniformLocation ul) = makeStateVar getter setter
+      where
+        getter = undefined
+        setter x = glUniformMatrix3fv (fromIntegral ul :: GL.GLint) 1 GL_FALSE $
+            case aSing @Float @[3, 3] of
+                ABase
+                  | ba <- getBytes x
+                  , isTrue# (isByteArrayPinned# ba)
+                  -> unsafeForeignPtrToPtr $ ForeignPtr
+                    (plusAddr# (byteArrayContents# ba) (byteOffset x))
+                    (PlainPtr (unsafeCoerce# ba))
+
+                _ | E <- inferPrim x -> case runRW#
+                    ( \s0 -> case newAlignedPinnedByteArray#
+                                    (byteSize @Mat33f undefined)
+                                    (byteAlign @Mat33f undefined) s0 of
+                      (# s1, mba #) ->
+                          unsafeFreezeByteArray# mba (writeBytes mba 0# x s1)
+                    ) of
+                    (# _, ba #) -> unsafeForeignPtrToPtr
+                        $ ForeignPtr (byteArrayContents# ba)
+                        (PlainPtr (unsafeCoerce# ba))
+    uniformv loc = undefined
+
+instance Uniform (Matrix GL.GLfloat 4 4) where
+    uniform (UniformLocation ul) = makeStateVar getter setter
+      where
+        getter = undefined
+        setter x = glUniformMatrix4fv (fromIntegral ul :: GL.GLint) 1 GL_FALSE $
+            case aSing @Float @[4, 4] of
+                ABase
+                  | ba <- getBytes x
+                  , isTrue# (isByteArrayPinned# ba)
+                  -> unsafeForeignPtrToPtr $ ForeignPtr
+                    (plusAddr# (byteArrayContents# ba) (byteOffset x))
+                    (PlainPtr (unsafeCoerce# ba))
+
+                _ | E <- inferPrim x -> case runRW#
+                    ( \s0 -> case newAlignedPinnedByteArray#
+                                    (byteSize @Mat44f undefined)
+                                    (byteAlign @Mat44f undefined) s0 of
+                      (# s1, mba #) ->
+                          unsafeFreezeByteArray# mba (writeBytes mba 0# x s1)
+                    ) of
+                    (# _, ba #) -> unsafeForeignPtrToPtr
+                        $ ForeignPtr (byteArrayContents# ba)
+                        (PlainPtr (unsafeCoerce# ba))
+    uniformv loc = undefined
 
 dummyVertex :: GL.Vertex3 GL.GLfloat
 dummyVertex = undefined
@@ -162,7 +245,11 @@ someFunc = do
 
     setAndloop window = do
         ref <- newIORef (0,0,-20)
-        proMatrixRef <- projectionMatrix 90 0.1 1000 1 >>= newIORef
+        -- proMatrixRef <- projectionMatrix 90 0.1 100 1 >>= newIORef
+        let p = perspective 0.1 100 ((pi * 90) / 180) 1 :: Mat44f
+        proMatrixRef <- newIORef $ p
+        print p
+        projectionMatrix 90 0.1 100 1
         GLFW.setKeyCallback window (Just $ callback ref)
         GLFW.setScrollCallback window (Just $ callbackScrol ref)
         GLFW.setWindowSizeCallback window
@@ -199,10 +286,10 @@ someFunc = do
 
             GL.uniform texUniformLoc $= transMat
             GL.uniform proUniformLoc $= proMatrix
+            projectionMatrix 90 0.1 100 1
             GL.uniform rotationUniformLoc $= rotMat
             GL.bindVertexArrayObject $= Just (modelVAO model)
             GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt (bufferOffset 0)
---            get GL.errors >>= print
             GLFW.swapBuffers window
             loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model
 
@@ -218,8 +305,13 @@ projectionMatrix
     -> GL.GLfloat
     -> IO (GL.GLmatrix GL.GLfloat)
 projectionMatrix fov near far windowRation =
-    GL.newMatrix GL.ColumnMajor [s,0,0,0, 0,s',0,0, 0,0,v1,-1, 0,0,v2,0]
+    GL.newMatrix GL.ColumnMajor ll
   where
+    ll = [ s,0,0,0
+        , 0,s',0,0
+        , 0,0,v1,-1
+        , 0,0,v2,0
+        ]
     fovRad = (pi * fov) / 180
     tanHalf = tan(fovRad / 2)
     s = 1 / (tanHalf * windowRation)
@@ -255,21 +347,21 @@ rotationMatrix angle x y z =
       a23 = y * z * (1 - angleCos) - x * angleSin
       a33 = angleCos + z * z * (1 - angleCos)
 
-callbackWindowSize :: IORef (GL.GLmatrix GL.GLfloat) -> GLFW.WindowSizeCallback
+callbackWindowSize :: IORef Mat44f -> GLFW.WindowSizeCallback
 callbackWindowSize ref _window w h = do
     print "width: "
     print w
     print "height: "
     print h
     GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral w) (fromIntegral h))
-    projectionMatrix 90 0.01 100 (fromIntegral w / fromIntegral h) >>= writeIORef ref
+    writeIORef ref $ perspective 0.1 100 ((pi * 90) / 180) (fromIntegral w / fromIntegral h)
 
 callbackScrol
     :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat)
     -> GLFW.ScrollCallback
 callbackScrol ref window scrollX scrollY = do
     act <- atomicModifyIORef' ref
-        $ \(x, y, z) -> (((x, y, z + ((realToFrac scrollY) / 5)), (x, y, z)))
+        $ \(x, y, z) -> ((x, y, z + realToFrac scrollY), (x, y, z))
     print act
 
 callback :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat) -> GLFW.KeyCallback
