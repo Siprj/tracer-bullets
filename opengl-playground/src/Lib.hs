@@ -173,6 +173,7 @@ data LoadedModel = LoadedModel
     -- ^ Vertex array object
     , verticesBAO :: GL.BufferObject
     -- ^ Buffer array object
+    , normalBAO :: GL.BufferObject
     , indicesEAB :: GL.BufferObject
     , indicesSize :: GL.GLint
     }
@@ -187,10 +188,14 @@ loadModel Model{..} = do
     GL.vertexAttribArray (GL.AttribLocation 0) $= GL.Enabled
     get GL.errors >>= print
 
+    nbao <- loadNormal vertexNormals
+    GL.vertexAttribArray (GL.AttribLocation 1) $= GL.Enabled
+    get GL.errors >>= print
+
     eao <- loadIndices indices
     get GL.errors >>= print
 
-    pure $ LoadedModel vao vbao eao (fromIntegral $ V.length indices)
+    pure $ LoadedModel vao vbao nbao eao (fromIntegral $ V.length indices)
   where
     loadBuffer :: V.Vector (GL.Vertex3 GL.GLfloat) -> IO GL.BufferObject
     loadBuffer buffer = do
@@ -202,6 +207,23 @@ loadModel Model{..} = do
             GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
         get GL.errors >>= print
         GL.vertexAttribPointer (GL.AttribLocation 0) $=
+            ( GL.ToFloat
+            , GL.VertexArrayDescriptor 3 GL.Float
+                (fromIntegral . sizeOf $ V.head buffer) (bufferOffset 0)
+            )
+        get GL.errors >>= print
+        pure bufferName
+
+    loadNormal :: V.Vector (GL.Vertex3 GL.GLfloat) -> IO GL.BufferObject
+    loadNormal buffer = do
+        bufferName <- GL.genObjectName
+        GL.bindBuffer GL.ArrayBuffer $= Just bufferName
+        V.unsafeWith buffer $ \ptr -> do
+            let size = fromIntegral
+                    (V.length buffer * sizeOf (V.head buffer))
+            GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
+        get GL.errors >>= print
+        GL.vertexAttribPointer (GL.AttribLocation 1) $=
             ( GL.ToFloat
             , GL.VertexArrayDescriptor 3 GL.Float
                 (fromIntegral . sizeOf $ V.head buffer) (bufferOffset 0)
@@ -263,6 +285,8 @@ someFunc = do
         texUniformLoc <- get $ GL.uniformLocation prog "transform"
         proUniformLoc <- get $ GL.uniformLocation prog "projection"
         rotationUniformLoc <- get $ GL.uniformLocation prog "rotation"
+        lightPosUniformLoc <- get $ GL.uniformLocation prog "lightPos"
+        GL.uniform lightPosUniformLoc $= (GL.Vector3 30 10 0 :: GL.Vector3 GL.GLfloat)
         get GL.errors >>= print
         GL.currentProgram $= Just prog
         get GL.errors >>= print
