@@ -57,58 +57,10 @@ import Graphics.GL.Tokens
 
 import Texture
 import ObjLoader
+import Graphics.Rendering.OpenGL.DataFrame
+
 
 data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !(GL.Vertex2 GL.GLfloat)
-
-instance Uniform (Matrix GL.GLfloat 3 3) where
-    uniform (UniformLocation ul) = makeStateVar getter setter
-      where
-        getter = undefined
-        setter x = glUniformMatrix3fv (fromIntegral ul :: GL.GLint) 1 GL_FALSE $
-            case aSing @Float @[3, 3] of
-                ABase
-                  | ba <- getBytes x
-                  , isTrue# (isByteArrayPinned# ba)
-                  -> unsafeForeignPtrToPtr $ ForeignPtr
-                    (plusAddr# (byteArrayContents# ba) (byteOffset x))
-                    (PlainPtr (unsafeCoerce# ba))
-
-                _ | E <- inferPrim x -> case runRW#
-                    ( \s0 -> case newAlignedPinnedByteArray#
-                                    (byteSize @Mat33f undefined)
-                                    (byteAlign @Mat33f undefined) s0 of
-                      (# s1, mba #) ->
-                          unsafeFreezeByteArray# mba (writeBytes mba 0# x s1)
-                    ) of
-                    (# _, ba #) -> unsafeForeignPtrToPtr
-                        $ ForeignPtr (byteArrayContents# ba)
-                        (PlainPtr (unsafeCoerce# ba))
-    uniformv loc = undefined
-
-instance Uniform (Matrix GL.GLfloat 4 4) where
-    uniform (UniformLocation ul) = makeStateVar getter setter
-      where
-        getter = undefined
-        setter x = glUniformMatrix4fv (fromIntegral ul :: GL.GLint) 1 GL_FALSE $
-            case aSing @Float @[4, 4] of
-                ABase
-                  | ba <- getBytes x
-                  , isTrue# (isByteArrayPinned# ba)
-                  -> unsafeForeignPtrToPtr $ ForeignPtr
-                    (plusAddr# (byteArrayContents# ba) (byteOffset x))
-                    (PlainPtr (unsafeCoerce# ba))
-
-                _ | E <- inferPrim x -> case runRW#
-                    ( \s0 -> case newAlignedPinnedByteArray#
-                                    (byteSize @Mat44f undefined)
-                                    (byteAlign @Mat44f undefined) s0 of
-                      (# s1, mba #) ->
-                          unsafeFreezeByteArray# mba (writeBytes mba 0# x s1)
-                    ) of
-                    (# _, ba #) -> unsafeForeignPtrToPtr
-                        $ ForeignPtr (byteArrayContents# ba)
-                        (PlainPtr (unsafeCoerce# ba))
-    uniformv loc = undefined
 
 dummyVertex :: GL.Vertex3 GL.GLfloat
 dummyVertex = undefined

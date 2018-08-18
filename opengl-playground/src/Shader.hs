@@ -17,6 +17,7 @@ import qualified Graphics.Rendering.OpenGL.GL.Shaders.ShaderObjects as GL (Shade
 import System.Exit (exitFailure)
 import System.IO (IO, FilePath, putStrLn)
 
+
 data Shader = Shader
     { setup :: IO ()
     , tearDown :: IO ()
@@ -47,8 +48,6 @@ compileProgram vertexShaderText fragmentShaderText = do
     attachShader shaderProgram fragmentShader
     linkProgram shaderProgram
     failProgramOnError shaderProgram "Shader program compilation FAILED."
-
-    currentProgram $= Just shaderProgram
 
     deleteObjectName vertexShader
     deleteObjectName fragmentShader

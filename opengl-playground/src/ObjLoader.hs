@@ -53,10 +53,10 @@ import Text.Show (Show)
 
 data Model = Model
     { vertices :: SV.Vector (Vertex3 GLfloat)
-    -- | This vector may be empty.
     , textureUV :: SV.Vector (Vertex2 GLfloat)
-    -- | This vector may be empty.
+    -- ^ This vector may be empty.
     , vertexNormals :: SV.Vector (Vertex3 GLfloat)
+    -- ^ This vector may be empty.
     , indices :: SV.Vector GLint
     }
   deriving (Show)
@@ -160,9 +160,7 @@ convert ObjParserState{..} =
     toModel :: ObjConvertState -> Model
     toModel ObjConvertState{..} = Model
         { vertices = SV.fromList $ toList _convertedVertices
-        -- | This vector may be empty.
         , textureUV = SV.fromList $ toList _convertedUV
-        -- | This vector may be empty.
         , vertexNormals = SV.fromList $ toList _convertedNormals
         , indices = SV.fromList . fmap fromIntegral $ toList _indices'
         }
