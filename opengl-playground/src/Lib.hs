@@ -57,7 +57,9 @@ import Graphics.GL.Tokens
 
 import Texture
 import ObjLoader
-import Graphics.Rendering.OpenGL.DataFrame
+import Graphics.Rendering.OpenGL.GL.DataFrame
+import Model (LoadedModel(..), loadModel)
+import Shader.OpaqueShader
 
 
 data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !(GL.Vertex2 GL.GLfloat)
@@ -78,123 +80,7 @@ instance Storable ShaderData where
         poke (castPtr ptr) a
         poke (plusPtr ptr $ sizeOf dummyVertex) b
 
-reportError :: String -> Bool -> IO ()
-reportError str res = unless res $ putStrLn str >> exitFailure
 
-compileProgramFile :: FilePath -> FilePath -> IO GL.Program
-compileProgramFile vertexShaderFileName fragmenShaderFileName = do
-    vertexShaderText <- B.readFile vertexShaderFileName
-    fragmenShaderText <- B.readFile fragmenShaderFileName
-
-    compileProgram vertexShaderText fragmenShaderText
-
-compileProgram :: ByteString -> ByteString -> IO GL.Program
-compileProgram vertexShaderText fragmentShaderText = do
-    vertexShader <- GL.createShader GL.VertexShader
-    GL.shaderSourceBS vertexShader $= vertexShaderText
-    GL.compileShader vertexShader
-    get (GL.shaderInfoLog vertexShader) >>= putStrLn
-    GL.compileStatus vertexShader
-        >>= reportError "Vertec shader compilation FAILED."
-
-    fragmentShader <- GL.createShader GL.FragmentShader
-    GL.shaderSourceBS fragmentShader $= fragmentShaderText
-    GL.compileShader fragmentShader
-    get (GL.shaderInfoLog fragmentShader) >>= putStrLn
-    GL.compileStatus fragmentShader
-        >>= reportError "Fragmen shader compilation FAILED."
-
-    shaderProgram <- GL.createProgram
-    GL.attachShader shaderProgram vertexShader
-    GL.attachShader shaderProgram fragmentShader
-    GL.linkProgram shaderProgram
-    get (GL.programInfoLog shaderProgram) >>= putStrLn
-    GL.linkStatus shaderProgram
-        >>= reportError "Shader program compilation FAILED."
-    GL.currentProgram $= Just shaderProgram
-
-    GL.deleteObjectName vertexShader
-    GL.deleteObjectName fragmentShader
-    pure shaderProgram
-
-bufferOffset :: Integral a => a -> Ptr b
-bufferOffset = plusPtr nullPtr . fromIntegral
-
-data LoadedModel = LoadedModel
-    { modelVAO :: GL.VertexArrayObject
-    -- ^ Vertex array object
-    , verticesBAO :: GL.BufferObject
-    -- ^ Buffer array object
-    , normalBAO :: GL.BufferObject
-    , indicesEAB :: GL.BufferObject
-    , indicesSize :: GL.GLint
-    }
-  deriving (Show)
-
-loadModel :: Model -> IO LoadedModel
-loadModel Model{..} = do
-    vao <- GL.genObjectName
-    GL.bindVertexArrayObject $= Just vao
-
-    vbao <- loadBuffer vertices
-    GL.vertexAttribArray (GL.AttribLocation 0) $= GL.Enabled
-    get GL.errors >>= print
-
-    nbao <- loadNormal vertexNormals
-    GL.vertexAttribArray (GL.AttribLocation 1) $= GL.Enabled
-    get GL.errors >>= print
-
-    eao <- loadIndices indices
-    get GL.errors >>= print
-
-    pure $ LoadedModel vao vbao nbao eao (fromIntegral $ V.length indices)
-  where
-    loadBuffer :: V.Vector (GL.Vertex3 GL.GLfloat) -> IO GL.BufferObject
-    loadBuffer buffer = do
-        bufferName <- GL.genObjectName
-        GL.bindBuffer GL.ArrayBuffer $= Just bufferName
-        V.unsafeWith buffer $ \ptr -> do
-            let size = fromIntegral
-                    (V.length buffer * sizeOf (V.head buffer))
-            GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
-        get GL.errors >>= print
-        GL.vertexAttribPointer (GL.AttribLocation 0) $=
-            ( GL.ToFloat
-            , GL.VertexArrayDescriptor 3 GL.Float
-                (fromIntegral . sizeOf $ V.head buffer) (bufferOffset 0)
-            )
-        get GL.errors >>= print
-        pure bufferName
-
-    loadNormal :: V.Vector (GL.Vertex3 GL.GLfloat) -> IO GL.BufferObject
-    loadNormal buffer = do
-        bufferName <- GL.genObjectName
-        GL.bindBuffer GL.ArrayBuffer $= Just bufferName
-        V.unsafeWith buffer $ \ptr -> do
-            let size = fromIntegral
-                    (V.length buffer * sizeOf (V.head buffer))
-            GL.bufferData GL.ArrayBuffer $= (size, ptr, GL.StaticDraw)
-        get GL.errors >>= print
-        GL.vertexAttribPointer (GL.AttribLocation 1) $=
-            ( GL.ToFloat
-            , GL.VertexArrayDescriptor 3 GL.Float
-                (fromIntegral . sizeOf $ V.head buffer) (bufferOffset 0)
-            )
-        get GL.errors >>= print
-        pure bufferName
-
-    loadIndices :: V.Vector GL.GLint -> IO GL.BufferObject
-    loadIndices buffer = do
-        bufferName <- GL.genObjectName
-        get GL.errors >>= print
-        GL.bindBuffer GL.ElementArrayBuffer $= Just bufferName
-        get GL.errors >>= print
-        V.unsafeWith buffer $ \ptr -> do
-            let size = fromIntegral
-                    (V.length buffer * sizeOf (V.head buffer))
-            GL.bufferData GL.ElementArrayBuffer $= (size, ptr, GL.StaticDraw)
-        get GL.errors >>= print
-        pure bufferName
 
 someFunc :: IO ()
 someFunc = do
@@ -233,19 +119,13 @@ someFunc = do
         lModel <- readModel "assets/hoverTank.obj" >>= loadModel
         print "model loaded"
 
-        prog <- compileProgramFile "shader/vertex.vert" "shader/fragment.frag"
-        texUniformLoc <- get $ GL.uniformLocation prog "transform"
-        proUniformLoc <- get $ GL.uniformLocation prog "projection"
-        rotationUniformLoc <- get $ GL.uniformLocation prog "rotation"
-        lightPosUniformLoc <- get $ GL.uniformLocation prog "lightPos"
-        GL.uniform lightPosUniformLoc $= (GL.Vector3 30 10 0 :: GL.Vector3 GL.GLfloat)
-        get GL.errors >>= print
-        GL.currentProgram $= Just prog
+        prog@OpaqueShader{..} <- compileOpaqueShader
+        setup
         get GL.errors >>= print
 
-        loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window lModel
+        loop prog proMatrixRef ref window lModel
 
-    loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model = do
+    loop prog@OpaqueShader{..} proMatrixRef ref window model = do
         shouldClose <- GLFW.windowShouldClose window
         unless shouldClose $ do
             GLFW.pollEvents
@@ -254,20 +134,18 @@ someFunc = do
             GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
             GL.clear [GL.ColorBuffer, GL.DepthBuffer]
             (v1, v2, v3) <- readIORef ref
-            transMat <- GL.newMatrix GL.ColumnMajor
-                [1,0,0,0, 0,1,0,0, 0,0,1,0, v1,v2,v3,1] :: IO (GL.GLmatrix GL.GLfloat)
+            time <- realToFrac . fromJust <$> GLFW.getTime
+            let modelMatrix = translate3 (vec3 v1 v2 v3) %* rotateY (time / 10)
             proMatrix <- readIORef proMatrixRef
-            time <- fromJust <$> GLFW.getTime
-            rotMat <- rotationMatrix (realToFrac time) 0 1 0
 
-            GL.uniform texUniformLoc $= transMat
-            GL.uniform proUniformLoc $= proMatrix
-            projectionMatrix 90 0.1 100 1
-            GL.uniform rotationUniformLoc $= rotMat
+            setProjectionMatrix proMatrix
+            setModelMatrix modelMatrix
+            setViewMatrix eye
+            setLightPosition $ GL.Vector3 10 10 10
             GL.bindVertexArrayObject $= Just (modelVAO model)
-            GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt (bufferOffset 0)
+            GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt nullPtr
             GLFW.swapBuffers window
-            loop rotationUniformLoc proUniformLoc proMatrixRef texUniformLoc ref window model
+            loop prog proMatrixRef ref window model
 
 crateUnitMatrix :: IO (GL.GLmatrix GL.GLfloat)
 crateUnitMatrix =

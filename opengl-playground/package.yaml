@@ -28,6 +28,7 @@ dependencies:
   - JuicyPixels
   - lens
   - OpenGL
+  - ObjectName
   - OpenGLRaw
   - parser-combinators
   - pretty-simple
