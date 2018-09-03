@@ -165,7 +165,6 @@ convert ObjParserState{..} =
         , indices = SV.fromList . fmap fromIntegral $ toList _indices'
         }
 
-
 parseObjLines :: ObjParser ()
 parseObjLines = void $
     ( parseVertex
@@ -185,7 +184,7 @@ parseObjLines = void $
                 <*> (realToFrac <$> double)
         modify (over vertices' (|> v))
 
-    parseComment ::ObjParser ()
+    parseComment :: ObjParser ()
     parseComment = lift $ string "#" *>
         skipWhile (\c -> not $ c == '\r' || c == '\n')
 
