@@ -16,18 +16,9 @@ import Control.Monad (fail, mapM)
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.State.Strict
 import Control.Lens
-import Data.Bool ((||), not)
-import Data.ByteString (ByteString, readFile)
-import Data.ByteString.Char8 (unpack)
-import Data.Char (isAlphaNum)
-import Data.Either (Either(Left, Right), either)
-import Data.Eq ((==))
-import Data.Function (($), (.), id)
-import Data.Functor ((<$>), fmap, void)
-import Data.Maybe (Maybe(Just, Nothing), maybe)
-import Data.Attoparsec.ByteString (Parser)
-import Data.Attoparsec.ByteString.Char8
-    ( parseOnly
+import Data.Attoparsec.Text
+    ( Parser
+    , parseOnly
     , anyChar
     , char
     , decimal
@@ -41,9 +32,18 @@ import Data.Attoparsec.ByteString.Char8
     , takeWhile1
     , many'
     )
+import Data.Bool ((||), not)
+import Data.Char (isAlphaNum)
+import Data.Either (Either(Left, Right), either)
+import Data.Eq ((==))
+import Data.Function (($), (.), id)
+import Data.Functor ((<$>), fmap, void)
+import Data.Maybe (Maybe(Just, Nothing), maybe)
 import Data.String (String)
 import Graphics.Rendering.OpenGL
     (Color3(Color3), GLfloat, Vertex3(Vertex3), Vertex2(Vertex2))
+import Data.Text (Text, unpack)
+import Data.Text.IO (readFile)
 import Text.Show (Show)
 import System.IO (IO, FilePath)
 
@@ -58,9 +58,9 @@ data Material = Material
     -- ^ Difuse colour.
     , ks :: Color3 GLfloat
     -- ^ Specular colour.
-    , ke :: Color3 GLfloat
+    , ke :: Maybe (Color3 GLfloat)
     -- ^ Emission coefficient.
-    , ni :: !GLfloat
+    , ni :: Maybe GLfloat
     -- ^ Optical density/index of refraction. Can contain value in range 0.001
     -- to 1.0.
     , d :: !GLfloat
@@ -135,10 +135,11 @@ convert = maybe err pure . mapM convert'
         d <- _materialStateD
         pure $ Material
             { name =_materialStateName
+            , ke = _materialStateKe
+            , ni = _materialStateNi
             , ..
             }
-    err = fail "mtl file must contain Ns, Ka, Kd, Ks, d"
--- TODO: Ke, Ni may be missing
+    err = fail "Every material must contain Ns, Ka, Kd, Ks, d fileds."
 
 parseMaterials :: MaterialParser ()
 parseMaterials = do
@@ -193,9 +194,7 @@ parseD = parseModifyHead (parseFloat "d") materialStateD
 -- TODO: Support map_Kd.
 parseUnsupported :: MaterialParser ()
 parseUnsupported = lift $ (string "illum" <|> string "map_Kd")
-    *> skipWhile (\c -> not $ c == '\r' || c == '\n')
--- TODO: There is functio isEndOfLine -> (\c -> not $ c == '\r' || c == '\n')
--- use it after switching to Attoparsec.Text
+    *> skipWhile (not . isEndOfLine)
 
 parseModifyHead
     :: (MaterialParser a)
@@ -205,12 +204,12 @@ parseModifyHead p f = do
     v <- p
     modify (set (_head . f) $ Just v)
 
-parseFloat :: ByteString -> MaterialParser GLfloat
+parseFloat :: Text -> MaterialParser GLfloat
 parseFloat fieldName = lift $ do
     string fieldName *> skipSpace
     realToFrac <$> double
 
-parseColor :: ByteString -> MaterialParser (Color3 GLfloat)
+parseColor :: Text -> MaterialParser (Color3 GLfloat)
 parseColor colorName = lift $ do
     string colorName *> skipSpace
     c1 <- (realToFrac <$> double) <* skipSpace
@@ -220,4 +219,4 @@ parseColor colorName = lift $ do
 
 parseComment :: MaterialParser ()
 parseComment = lift $ string "#" *>
-    skipWhile (\c -> not $ c == '\r' || c == '\n')
+    skipWhile (not . isEndOfLine)
