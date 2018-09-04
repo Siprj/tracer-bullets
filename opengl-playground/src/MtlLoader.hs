@@ -6,7 +6,12 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module MtlLoader where
+module MtlLoader
+    ( Material
+    , Materials
+    , readMaterials
+    )
+  where
 
 import Prelude ((-), realToFrac, undefined, fromIntegral)
 

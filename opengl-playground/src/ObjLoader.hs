@@ -27,10 +27,12 @@ import Data.Attoparsec.ByteString.Char8
     , isEndOfLine
     , skipSpace
     , skipWhile
+    , takeWhile1
     , string
     )
 import Data.Bool ((||), not)
 import Data.ByteString (readFile)
+import Data.ByteString.Char8 (unpack)
 import Data.Either (Either, either)
 import Data.Eq ((==))
 import Data.Foldable (toList)
@@ -50,6 +52,8 @@ import Graphics.Rendering.OpenGL
 import System.IO (IO, FilePath)
 import Text.Show (Show)
 
+import MtlLoader
+
 
 data Model = Model
     { vertices :: SV.Vector (Vertex3 GLfloat)
@@ -66,6 +70,7 @@ data ObjParserState = ObjParserState
     , _textureUV' :: Seq (Vertex2 GLfloat)
     , _vertexNormals' :: Seq (Vertex3 GLfloat)
     , _faces' :: Seq Face
+    , _materialLibrary :: String
     }
   deriving (Show)
 
@@ -75,6 +80,7 @@ emptyObjParserState = ObjParserState
     , _textureUV' = mempty
     , _vertexNormals' = mempty
     , _faces' = mempty
+    , _materialLibrary = mempty
     }
 
 data Face = Face
@@ -199,6 +205,13 @@ parseObjLines = void $
             Vertex2 <$> (realToFrac <$> double <* skipSpace)
                 <*> (realToFrac <$> double)
         modify (over textureUV' (|> vt))
+
+    parseMtllib :: ObjParser ()
+    parseMtllib = do
+        matllib <- lift $ do
+            string "mtllib" *> skipSpace
+            takeWhile1 (\c -> not $ c == '\r' || c == '\n')
+        modify (set materialLibrary (unpack matllib))
 
     parseNormal :: ObjParser ()
     parseNormal = do
