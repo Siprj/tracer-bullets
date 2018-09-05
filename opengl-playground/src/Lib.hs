@@ -80,8 +80,6 @@ instance Storable ShaderData where
         poke (castPtr ptr) a
         poke (plusPtr ptr $ sizeOf dummyVertex) b
 
-
-
 someFunc :: IO ()
 someFunc = do
     GLFW.init
@@ -116,7 +114,7 @@ someFunc = do
             (Just $ callbackWindowSize proMatrixRef)
         GLFW.makeContextCurrent (Just window)
 
-        lModel <- readModel "assets/hoverTank.obj" >>= loadModel
+        lModel <- readModel "assets/hoverTank2.obj" >>= loadModel
         print "model loaded"
 
         prog@OpaqueShader{..} <- compileOpaqueShader

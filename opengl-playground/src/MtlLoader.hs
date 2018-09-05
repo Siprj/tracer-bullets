@@ -7,9 +7,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module MtlLoader
-    ( Material
+    ( Material(..)
     , Materials
     , readMaterials
+    , materialByName
     )
   where
 
@@ -41,6 +42,7 @@ import Data.Bool ((||), not)
 import Data.Char (isAlphaNum)
 import Data.Either (Either(Left, Right), either)
 import Data.Eq ((==))
+import Data.List (find)
 import Data.Function (($), (.), id)
 import Data.Functor ((<$>), fmap, void)
 import Data.Maybe (Maybe(Just, Nothing), maybe)
@@ -121,6 +123,9 @@ makeEmptyMaterial name = MaterialState
 makeLenses ''MaterialState
 
 type MaterialParser = StateT [MaterialState] Parser
+
+materialByName :: String -> Materials -> Maybe Material
+materialByName name' = find (\v -> name v == name')
 
 readMaterials :: FilePath -> IO Materials
 readMaterials fileName = do

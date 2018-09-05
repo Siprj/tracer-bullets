@@ -38,6 +38,7 @@ dependencies:
   - vector
   - dimensions
   - easytensor
+  - filepath
 
 library:
   source-dirs: src

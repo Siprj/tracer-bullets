@@ -36,6 +36,7 @@ data LoadedModel = LoadedModel
     , verticesBAO :: BufferObject
     -- ^ Buffer array object
     , normalBAO :: BufferObject
+    , colorBAO :: BufferObject
     , indicesEAB :: BufferObject
     , indicesSize :: GLint
     }
@@ -54,10 +55,14 @@ loadModel Model{..} = do
     vertexAttribArray (AttribLocation 1) $= Enabled
     get errors >>= print
 
+    cbao <- loadColor color
+    vertexAttribArray (AttribLocation 2) $= Enabled
+    get errors >>= print
+
     eao <- loadIndices indices
     get errors >>= print
 
-    pure $ LoadedModel vao vbao nbao eao (fromIntegral $ length indices)
+    pure $ LoadedModel vao vbao nbao cbao eao (fromIntegral $ length indices)
   where
     loadBuffer :: Vector (Vertex3 GLfloat) -> IO BufferObject
     loadBuffer buffer = do
@@ -103,5 +108,22 @@ loadModel Model{..} = do
             let size = fromIntegral
                     (length buffer * sizeOf (head buffer))
             bufferData ElementArrayBuffer $= (size, ptr, StaticDraw)
+        get errors >>= print
+        pure bufferName
+
+    loadColor :: Vector (Color3 GLfloat) -> IO BufferObject
+    loadColor buffer = do
+        bufferName <- genObjectName
+        bindBuffer ArrayBuffer $= Just bufferName
+        unsafeWith buffer $ \ptr -> do
+            let size = fromIntegral
+                    (length buffer * sizeOf (head buffer))
+            bufferData ArrayBuffer $= (size, ptr, StaticDraw)
+        get errors >>= print
+        vertexAttribPointer (AttribLocation 2) $=
+            ( ToFloat
+            , VertexArrayDescriptor 3 Float
+                (fromIntegral . sizeOf $ head buffer) nullPtr
+            )
         get errors >>= print
         pure bufferName
