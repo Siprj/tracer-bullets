@@ -24,7 +24,9 @@ module Lib
     ) where
 
 import Control.Monad (unless, when, void)
-import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef, writeIORef)
+import Control.Monad.IO.Class (liftIO)
+import qualified Control.Monad.Trans.State.Strict as ST
+import Data.IORef (IORef, newIORef, atomicModifyIORef', readIORef, writeIORef, modifyIORef)
 import Data.Maybe (fromJust)
 import Data.Monoid
 import Data.StateVar
@@ -64,6 +66,18 @@ import Shader.OpaqueShader
 
 data ShaderData = ShaderData !(GL.Vertex3 GL.GLfloat) !(GL.Vertex2 GL.GLfloat)
 
+data State = State
+    { cameraPitchRef :: IORef Float
+    , cameraYawRef :: IORef Float
+    , cameraPositionRef :: IORef Vec3f
+    , opaqueShader :: OpaqueShader
+    , projectionMatrixRef :: IORef Mat44f
+    , loadedModel :: LoadedModel
+    , gameWindow :: GLFW.Window
+    }
+
+type GameLoopMonad = ST.StateT State IO
+
 dummyVertex :: GL.Vertex3 GL.GLfloat
 dummyVertex = undefined
 
@@ -80,38 +94,45 @@ instance Storable ShaderData where
         poke (castPtr ptr) a
         poke (plusPtr ptr $ sizeOf dummyVertex) b
 
+toRad :: Float -> Float
+toRad v = v * (pi/180)
+
 someFunc :: IO ()
 someFunc = do
     GLFW.init
     primaryMonitor <- fromJust <$> GLFW.getPrimaryMonitor
     supportedVideoModes <- GLFW.getVideoModes primaryMonitor
-    let (GLFW.VideoMode width height red green blue refreshRate) =
+    let vm@(GLFW.VideoMode width height red green blue refreshRate) =
             maximum $ maximum supportedVideoModes
-    GLFW.windowHint $ GLFW.WindowHint'RedBits red
-    GLFW.windowHint $ GLFW.WindowHint'GreenBits green
-    GLFW.windowHint $ GLFW.WindowHint'BlueBits blue
-    GLFW.windowHint $ GLFW.WindowHint'RefreshRate refreshRate
+    GLFW.windowHint $ GLFW.WindowHint'RedBits $ Just red
+    GLFW.windowHint $ GLFW.WindowHint'GreenBits $ Just green
+    GLFW.windowHint $ GLFW.WindowHint'BlueBits $ Just blue
+    GLFW.windowHint $ GLFW.WindowHint'RefreshRate $ Just refreshRate
     GLFW.windowHint $ GLFW.WindowHint'ContextVersionMajor 3
     GLFW.windowHint $ GLFW.WindowHint'ContextVersionMinor 3
     GLFW.windowHint $ GLFW.WindowHint'OpenGLProfile GLFW.OpenGLProfile'Core
     window <- GLFW.createWindow width height
         "blabla" (Just primaryMonitor) Nothing
-    maybe printErrorAndFail setAndloop window
+    maybe printErrorAndFail (setAndloop primaryMonitor vm) window
     GLFW.terminate
   where
     printErrorAndFail = print "Can't create window" >> exitFailure
 
-    setAndloop window = do
-        ref <- newIORef (0,0,-20)
-        -- proMatrixRef <- projectionMatrix 90 0.1 100 1 >>= newIORef
+    setAndloop primaryMonitor vm window = do
+        GLFW.setFullscreen window primaryMonitor vm
+        GLFW.setCursorInputMode window GLFW.CursorInputMode'Disabled
+        pitch <- newIORef 0
+        yaw <- newIORef 0
+        pos <- GLFW.getCursorPos window
+        lastMousePos <- newIORef pos
+        position <- newIORef (vec3 0 0 (-20))
         let p = perspective 0.1 100 ((pi * 90) / 180) 1 :: Mat44f
         proMatrixRef <- newIORef $ p
-        print p
-        projectionMatrix 90 0.1 100 1
-        GLFW.setKeyCallback window (Just $ callback ref)
-        GLFW.setScrollCallback window (Just $ callbackScrol ref)
+        GLFW.setKeyCallback window (Just $ callback pitch yaw position)
+        GLFW.setScrollCallback window (Just $ callbackScrol pitch yaw position)
         GLFW.setWindowSizeCallback window
             (Just $ callbackWindowSize proMatrixRef)
+        GLFW.setCursorPosCallback window (Just $ mouseCallback lastMousePos yaw pitch)
         GLFW.makeContextCurrent (Just window)
 
         lModel <- readModel "assets/hoverTank2.obj" >>= loadModel
@@ -121,29 +142,54 @@ someFunc = do
         setup
         get GL.errors >>= print
 
-        loop prog proMatrixRef ref window lModel
+        ST.runStateT loop $ State pitch yaw position prog proMatrixRef lModel window
 
-    loop prog@OpaqueShader{..} proMatrixRef ref window model = do
-        shouldClose <- GLFW.windowShouldClose window
+
+    loop :: GameLoopMonad ()
+    loop = do
+        State{..} <- ST.get
+        shouldClose <- liftIO $ GLFW.windowShouldClose gameWindow
         unless shouldClose $ do
-            GLFW.pollEvents
-            GL.depthFunc $= Just GL.Less
-            GL.cullFace $= Just GL.Back
-            GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
-            GL.clear [GL.ColorBuffer, GL.DepthBuffer]
-            (v1, v2, v3) <- readIORef ref
-            time <- realToFrac . fromJust <$> GLFW.getTime
-            let modelMatrix = translate3 (vec3 v1 v2 v3) %* rotateY (time / 10)
-            proMatrix <- readIORef proMatrixRef
+            liftIO $ GLFW.pollEvents
+            liftIO $ GL.depthFunc $= Just GL.Less
+            liftIO $ GL.cullFace $= Just GL.Back
+            liftIO $ GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
+            liftIO $ GL.clear [GL.ColorBuffer, GL.DepthBuffer]
+            time <- liftIO $ realToFrac . fromJust <$> GLFW.getTime
+            let modelMatrix = translate3 (vec3 0 0 (-20)) %* rotateY (time / 10)
+            proMatrix <- liftIO $ readIORef projectionMatrixRef
+            cameraPosition <- liftIO $ readIORef cameraPositionRef
+            cameraPitch <- fmap toRad . liftIO $ readIORef cameraPitchRef
+            cameraYaw <- fmap toRad . liftIO $ readIORef cameraYawRef
+            wPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'W
 
-            setProjectionMatrix proMatrix
-            setModelMatrix modelMatrix
-            setViewMatrix eye
-            setLightPosition $ GL.Vector3 10 10 10
-            GL.bindVertexArrayObject $= Just (modelVAO model)
-            GL.drawElements GL.Triangles (indicesSize model) GL.UnsignedInt nullPtr
-            GLFW.swapBuffers window
-            loop prog proMatrixRef ref window model
+            let cameraDirection = vec3
+                    (cos cameraYaw * cos cameraPitch)
+                    (sin cameraPitch)
+                    (sin cameraYaw * cos cameraPitch)
+            let viewMatrix = lookAt
+                    (vec3 0.0 1.0 0.0)
+                    cameraPosition
+                    (cameraPosition + cameraDirection)
+            let OpaqueShader{..} = opaqueShader
+
+            when wPressed . liftIO $ modifyIORef cameraPositionRef
+                (\v -> v - cameraDirection * (realToFrac 0.01))
+
+
+            liftIO $ setProjectionMatrix proMatrix
+            liftIO $ setModelMatrix modelMatrix
+            liftIO $ setViewMatrix viewMatrix
+            liftIO . setLightPosition $ GL.Vector3 10 10 10
+            liftIO $ GL.bindVertexArrayObject $= Just (modelVAO loadedModel)
+            liftIO $ GL.drawElements GL.Triangles (indicesSize loadedModel) GL.UnsignedInt nullPtr
+            liftIO $ GLFW.swapBuffers gameWindow
+            loop
+        pure ()
+
+isPressed :: GLFW.KeyState -> Bool
+isPressed GLFW.KeyState'Pressed = True
+isPressed _ = False
 
 crateUnitMatrix :: IO (GL.GLmatrix GL.GLfloat)
 crateUnitMatrix =
@@ -209,15 +255,33 @@ callbackWindowSize ref _window w h = do
     writeIORef ref $ perspective 0.1 100 ((pi * 90) / 180) (fromIntegral w / fromIntegral h)
 
 callbackScrol
-    :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat)
+    :: IORef Float -> IORef Float -> IORef Vec3f
     -> GLFW.ScrollCallback
-callbackScrol ref window scrollX scrollY = do
-    act <- atomicModifyIORef' ref
-        $ \(x, y, z) -> ((x, y, z + realToFrac scrollY), (x, y, z))
-    print act
+callbackScrol pitch yaw pos window scrollX scrollY = do
+    cameraPosition <- readIORef pos
+    cameraPitch <- fmap toRad $ readIORef pitch
+    cameraYaw <- fmap toRad $ readIORef yaw
+    let cameraDirection = vec3
+            (cos cameraYaw * cos cameraPitch)
+            (sin cameraPitch)
+            (sin cameraYaw * cos cameraPitch)
+    modifyIORef pos (\v -> v - cameraDirection * (realToFrac scrollY / 5))
 
-callback :: IORef (GL.GLfloat, GL.GLfloat, GL.GLfloat) -> GLFW.KeyCallback
-callback ref window key scanCode keyState modKeys = do
+mouseCallback
+    :: IORef (Double, Double)
+    -> IORef Float
+    -> IORef Float
+    -> GLFW.CursorPosCallback
+mouseCallback lastPos yaw pitch _ x y = do
+    (lastX, lastY) <- readIORef lastPos
+    let xOffset = realToFrac $ x - lastX
+    let yOffset = realToFrac $ y - lastY
+    writeIORef lastPos (x, y)
+    modifyIORef yaw (+ (xOffset*0.1))
+    modifyIORef pitch (\v -> min 89 $ max (-89) $ v + (yOffset*0.1))
+
+callback :: IORef Float -> IORef Float -> IORef Vec3f -> GLFW.KeyCallback
+callback pitch yaw pos window key scanCode keyState modKeys = do
     print key
     when (key == GLFW.Key'Escape && keyState == GLFW.KeyState'Pressed)
         (GLFW.setWindowShouldClose window True)
