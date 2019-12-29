@@ -74,6 +74,8 @@ data State = State
     , projectionMatrixRef :: IORef Mat44f
     , loadedModel :: LoadedModel
     , gameWindow :: GLFW.Window
+    , holoScaleRef :: IORef Float
+    , timeScaleRef :: IORef Float
     }
 
 type GameLoopMonad = ST.StateT State IO
@@ -125,9 +127,11 @@ someFunc = do
         yaw <- newIORef 0
         pos <- GLFW.getCursorPos window
         lastMousePos <- newIORef pos
-        position <- newIORef (vec3 0 0 (-20))
+        position <- newIORef (vec3 20 0 0)
         let p = perspective 0.1 100 ((pi * 90) / 180) 1 :: Mat44f
         proMatrixRef <- newIORef $ p
+        scaleRef <- newIORef $ 100
+        timeScaleRef <- newIORef $ 10
         GLFW.setKeyCallback window (Just $ callback pitch yaw position)
         GLFW.setScrollCallback window (Just $ callbackScrol pitch yaw position)
         GLFW.setWindowSizeCallback window
@@ -142,7 +146,10 @@ someFunc = do
         setup
         get GL.errors >>= print
 
-        ST.runStateT loop $ State pitch yaw position prog proMatrixRef lModel window
+        GL.blend $= GL.Enabled
+        GL.blendFunc $= (GL.SrcAlpha, GL.OneMinusSrcAlpha)
+
+        ST.runStateT loop $ State pitch yaw position prog proMatrixRef lModel window scaleRef timeScaleRef
 
 
     loop :: GameLoopMonad ()
@@ -153,6 +160,7 @@ someFunc = do
             liftIO $ GLFW.pollEvents
             liftIO $ GL.depthFunc $= Just GL.Less
             liftIO $ GL.cullFace $= Just GL.Back
+            -- liftIO $ GL.cullFace $= Nothing
             liftIO $ GL.clearColor $= GL.Color4 0.2 0.3 0.3 1.0
             liftIO $ GL.clear [GL.ColorBuffer, GL.DepthBuffer]
             time <- liftIO $ realToFrac . fromJust <$> GLFW.getTime
@@ -162,6 +170,10 @@ someFunc = do
             cameraPitch <- fmap toRad . liftIO $ readIORef cameraPitchRef
             cameraYaw <- fmap toRad . liftIO $ readIORef cameraYawRef
             wPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'W
+            rPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'R
+            tPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'T
+            yPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'Y
+            hPressed <- liftIO $ isPressed <$> GLFW.getKey gameWindow GLFW.Key'H
 
             let cameraDirection = vec3
                     (cos cameraYaw * cos cameraPitch)
@@ -174,12 +186,27 @@ someFunc = do
             let OpaqueShader{..} = opaqueShader
 
             when wPressed . liftIO $ modifyIORef cameraPositionRef
-                (\v -> v - cameraDirection * (realToFrac 0.01))
+                (\v -> v - cameraDirection * (realToFrac 1.05))
 
+            when rPressed . liftIO $ modifyIORef holoScaleRef
+                (\v -> v + 1)
+            when tPressed . liftIO $ modifyIORef holoScaleRef
+                (\v -> v - 1)
+
+            when yPressed . liftIO $ modifyIORef timeScaleRef
+                (\v -> v + 1)
+            when hPressed . liftIO $ modifyIORef timeScaleRef
+                (\v -> v - 1)
+
+            holoScale <- liftIO $ readIORef holoScaleRef
+            timeScale <- liftIO $ readIORef timeScaleRef
 
             liftIO $ setProjectionMatrix proMatrix
             liftIO $ setModelMatrix modelMatrix
             liftIO $ setViewMatrix viewMatrix
+            liftIO $ setTime time
+            liftIO $ setHoloScale holoScale
+            liftIO $ setTimeScale timeScale
             liftIO . setLightPosition $ GL.Vector3 10 10 10
             liftIO $ GL.bindVertexArrayObject $= Just (modelVAO loadedModel)
             liftIO $ GL.drawElements GL.Triangles (indicesSize loadedModel) GL.UnsignedInt nullPtr
@@ -283,7 +310,5 @@ mouseCallback lastPos yaw pitch _ x y = do
 callback :: IORef Float -> IORef Float -> IORef Vec3f -> GLFW.KeyCallback
 callback pitch yaw pos window key scanCode keyState modKeys = do
     print key
-    when (key == GLFW.Key'Escape && keyState == GLFW.KeyState'Pressed)
-        (GLFW.setWindowShouldClose window True)
     when (key == GLFW.Key'Escape && keyState == GLFW.KeyState'Pressed)
         (GLFW.setWindowShouldClose window True)

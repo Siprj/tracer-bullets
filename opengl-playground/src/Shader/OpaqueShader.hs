@@ -6,7 +6,7 @@ import Control.Applicative (pure)
 import Data.Function (($))
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.StateVar (($=), get)
-import Graphics.GL.Types (GLfloat)
+import Graphics.GL.Types (GLfloat, GLint)
 import Graphics.Rendering.OpenGL.GL.Shaders.ProgramObjects (Program, currentProgram)
 import Graphics.Rendering.OpenGL.GL.Shaders.Uniform (uniform, uniformLocation)
 import Graphics.Rendering.OpenGL.GL.Tensor (Vector3)
@@ -25,6 +25,9 @@ data OpaqueShader = OpaqueShader
     , setLightPosition :: Vector3 GLfloat -> IO ()
     , setProjectionMatrix :: Mat44f -> IO ()
     , setViewPosition :: Vector3 GLfloat -> IO ()
+    , setHoloScale :: GLfloat -> IO ()
+    , setTime :: GLfloat -> IO ()
+    , setTimeScale :: GLfloat -> IO ()
     }
 
 opaqueVertexShader = "shader/opaque.vert"
@@ -38,6 +41,9 @@ compileOpaqueShader = do
     projectionUniformLoc <- get $ uniformLocation prog "projection"
     lightPosUniformLoc <- get $ uniformLocation prog "lightPos"
     viewPosUniformLoc <- get $ uniformLocation prog "viewPos"
+    holoScaleLoc <- get $ uniformLocation prog "holoScale"
+    timeLoc <- get $ uniformLocation prog "time"
+    timeScaleLoc <- get $ uniformLocation prog "timeScale"
     pure OpaqueShader
         { setup = currentProgram $= Just prog
         , tearDown = currentProgram $= Nothing
@@ -46,4 +52,7 @@ compileOpaqueShader = do
         , setLightPosition = ($=) (uniform lightPosUniformLoc)
         , setProjectionMatrix = ($=) (uniform projectionUniformLoc)
         , setViewPosition = ($=) (uniform viewPosUniformLoc)
+        , setHoloScale = ($=) (uniform holoScaleLoc)
+        , setTime = ($=) (uniform timeLoc)
+        , setTimeScale = ($=) (uniform timeScaleLoc)
         }

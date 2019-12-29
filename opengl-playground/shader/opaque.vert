@@ -11,6 +11,7 @@ uniform mat4 projection;
 out vec3 Normal;
 out vec3 FragPos;
 out vec3 Color;
+out vec3 HoloPos;
 
 void main()
 {
@@ -19,4 +20,5 @@ void main()
     Normal =  normalize(vec3(transpose(inverse(model)) * vec4(aNormal, 1.0)));
     FragPos = vec3(model * vec4(aPos, 1.0));
     Color = aColor;
+    HoloPos = aPos;
 }
