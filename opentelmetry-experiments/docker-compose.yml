@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  bash-log-gen:
+    build:
+      dockerfile: Dockerfile
+      target: bash-log-gen
+    depends_on:
+      - fluent
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  fluent:
+    build:
+      dockerfile: Dockerfile
+      target: fluent
+    volumes:
+      - ./fluent.conf:/fluentd/etc/fluent.conf
+    links:
+      - "elasticsearch"
+    ports:
+      - "127.0.0.1:24224:2422"
+      - "24224:2422/udp"
+      - "9800:9800"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9800"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:8.2.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: "single-node"
+      ELASTIC_PASSWORD: "password"
+      xpack.security.enabled: false
+      xpack.security.http.ssl.enabled: false
+      xpack.security.transport.ssl.enabled: false
+
+  kibana:
+    image: kibana:8.2.3
+    links:
+      - "elasticsearch"
+    ports:
+      - "5601:5601"
