@@ -14,7 +14,7 @@ USER root
 # you may customize including plugins as you wish
 RUN buildDeps="sudo make gcc g++ libc-dev" \
  && apt-get update \
- && apt-get install -y --no-install-recommends $buildDeps iproute2 \
+ && apt-get install -y --no-install-recommends $buildDeps iproute2 curl \
  && sudo gem install fluent-plugin-elasticsearch \
  && sudo gem sources --clear-all \
  && SUDO_FORCE_REMOVE=yes \

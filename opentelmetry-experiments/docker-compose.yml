@@ -6,7 +6,9 @@ services:
       dockerfile: Dockerfile
       target: bash-log-gen
     depends_on:
-      - fluent
+      fluent:
+        condition: service_healthy
+    restart: always
     logging:
       driver: fluentd
       options:
@@ -21,20 +23,24 @@ services:
     links:
       - "elasticsearch"
     ports:
-      - "127.0.0.1:24224:2422"
-      - "24224:2422/udp"
+      - "127.0.0.1:24224:24224"
+      - "127.0.0.1:24224:24224/udp"
+      - "127.0.0.1:5140:5140"
       - "9800:9800"
+    restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9800"]
+      test: curl -f http://localhost:9800/
       interval: 30s
       timeout: 5s
       retries: 5
+      start_period: 20s
 
   elasticsearch:
     image: elasticsearch:8.2.3
     ports:
       - "9200:9200"
       - "9300:9300"
+    restart: always
     environment:
       discovery.type: "single-node"
       ELASTIC_PASSWORD: "password"
@@ -48,3 +54,4 @@ services:
       - "elasticsearch"
     ports:
       - "5601:5601"
+    restart: always
