@@ -1,0 +1,47 @@
+receivers:
+  fluentforward:
+    endpoint: "0.0.0.0:8006"
+
+exporters:
+  elasticsearch:
+    endpoints:
+      - http://elasticsearch:9200
+    user: elastic
+    password: password
+
+  logging:
+
+  influxdb:
+    endpoint: http://influxdb:8086
+    timeout: 500ms
+    org: my-organization
+    bucket: my-bucket
+    token: 7JeJIG3g83DqacjEKxvqIumM6PAz4s0aLY6jrAZhZuE9LmnYe7H9AdrQJojiMYy327WzaX0Tz36-PlyqLqy4jA==
+    metrics_schema: telegraf-prometheus-v2
+
+    sending_queue:
+      enabled: true
+      num_consumers: 3
+      queue_size: 10
+
+    retry_on_failure:
+      enabled: true
+      initial_interval: 1s
+      max_interval: 3s
+      max_elapsed_time: 10s
+
+extensions:
+  health_check:
+    check_collector_pipeline:
+      enabled: false
+      interval: "5m"
+      exporter_failure_threshold: 5
+  pprof:
+
+service:
+  extensions: [pprof, health_check]
+  pipelines:
+    logs:
+      receivers: [fluentforward]
+      processors: []
+      exporters: [influxdb, logging]

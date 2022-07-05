@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  bash-log-gen:
+    build:
+      dockerfile: Dockerfile
+      target: bash-log-gen
+    depends_on:
+      opentelemetry-collector-start-check:
+        condition: service_healthy
+    restart: always
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: tcp://127.0.0.1:8006
+
+  opentelemetry-collector:
+    image:  otel/opentelemetry-collector-contrib:0.54.0
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    depends_on:
+      - elasticsearch
+    ports:
+      - "13133:13133"
+      - "8006:8006"
+
+  opentelemetry-collector-start-check:
+    image:  bash:devel-alpine3.15
+    command: "sleep infinite"
+    depends_on:
+      - opentelemetry-collector
+    healthcheck:
+      # This healthcheck is so random...
+      test: "wget http://opentelemetry-collector:13133"
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - '127.0.0.1:8086:8086'
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminadmin
+      DOCKER_INFLUXDB_INIT_ORG: my-organization
+      DOCKER_INFLUXDB_INIT_BUCKET: my-bucket
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: 7JeJIG3g83DqacjEKxvqIumM6PAz4s0aLY6jrAZhZuE9LmnYe7H9AdrQJojiMYy327WzaX0Tz36-PlyqLqy4jA==
+
+  grafana:
+    image: grafana/grafana:9.0.2
+    ports:
+      - '127.0.0.1:3000:3000'
+    volumes:
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
