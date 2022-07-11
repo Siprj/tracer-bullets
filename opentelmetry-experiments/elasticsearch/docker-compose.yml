@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  bash-log-gen:
+    build:
+      dockerfile: Dockerfile
+      target: bash-log-gen
+    depends_on:
+      - opentelemetry-collector
+    restart: always
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: tcp://127.0.0.1:8006
+        fluentd-async-connect: "true"
+        fluentd-sub-second-precision: "true"
+
+  opentelemetry-collector:
+    image:  otel/opentelemetry-collector-contrib:0.54.0
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    depends_on:
+      - elasticsearch
+    ports:
+      - "127.0.0.1:8006:8006"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+    environment:
+      xpack.security.enabled: "false"
+      discovery.type: single-node
+    ports:
+      - "127.0.0.1:9200:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.2
+    restart: always
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    ports:
+      - "127.0.0.1:5601:5601"
+    depends_on:
+      - elasticsearch

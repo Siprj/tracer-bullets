@@ -1,0 +1,27 @@
+receivers:
+  fluentforward:
+    endpoint: "0.0.0.0:8006"
+
+exporters:
+  logging:
+
+  elasticsearch:
+    endpoints:
+    - "http://elasticsearch:9200"
+    user: elastic
+    password: changeme
+
+extensions:
+  health_check:
+    check_collector_pipeline:
+      enabled: false
+      interval: "5m"
+      exporter_failure_threshold: 5
+
+service:
+  extensions: [health_check]
+  pipelines:
+    logs:
+      receivers: [fluentforward]
+      processors: []
+      exporters: [elasticsearch, logging]
