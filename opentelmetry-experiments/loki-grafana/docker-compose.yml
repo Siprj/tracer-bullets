@@ -23,9 +23,7 @@ services:
     depends_on:
       - loki
     ports:
-      - 54526:54526
-      - "13133:13133"
-      - "8006:8006"
+      - "127.0.0.1:8006:8006"
 
   loki:
     image: grafana/loki:2.4.1
@@ -40,7 +38,7 @@ services:
   grafana:
     image: grafana/grafana:9.0.2
     ports:
-      - '127.0.0.1:3000:3000'
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./grafana-provisioning/:/etc/grafana/provisioning
     depends_on:

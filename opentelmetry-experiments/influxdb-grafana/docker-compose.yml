@@ -26,13 +26,12 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - "13133:13133"
-      - "8006:8006"
+      - "127.0.0.1:8006:8006"
 
   influxdb:
     image: influxdb:latest
     ports:
-      - '127.0.0.1:8086:8086'
+      - "127.0.0.1:8086:8086"
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: admin
@@ -44,7 +43,7 @@ services:
   grafana:
     image: grafana/grafana:9.0.2
     ports:
-      - '127.0.0.1:3000:3000'
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./grafana-provisioning/:/etc/grafana/provisioning
     depends_on:
