@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  bash-log-gen:
+    build:
+      dockerfile: Dockerfile
+      target: bash-log-gen
+    depends_on:
+      - opentelemetry-collector
+    restart: always
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: tcp://127.0.0.1:8006
+        fluentd-async-connect: "true"
+        fluentd-sub-second-precision: "true"
+
+  opentelemetry-collector:
+    image:  otel/opentelemetry-collector-contrib:0.54.0
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    depends_on:
+      - loki
+    ports:
+      - 54526:54526
+      - "13133:13133"
+      - "8006:8006"
+
+  loki:
+    image: grafana/loki:2.4.1
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ./loki.yaml:/etc/loki/local-config.yaml
+      - /var/log:/var/log:ro
+      - ./data/loki:/loki
+    user: "1000:1000"
+
+  grafana:
+    image: grafana/grafana:9.0.2
+    ports:
+      - '127.0.0.1:3000:3000'
+    volumes:
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+    depends_on:
+      - influxdb
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
