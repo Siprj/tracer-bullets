@@ -2,7 +2,7 @@
 
 counter=0
 
-while true; do 
+while true; do
   echo "test log ${counter}"
   counter=$(( counter + 1 ))
   sleep 1;
