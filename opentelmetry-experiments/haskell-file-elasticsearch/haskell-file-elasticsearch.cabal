@@ -4,22 +4,20 @@ version: 0.1.0
 -- synopsis:
 -- description:
 category:
-homepage: https://github.com/Siprj/haskell-file-elasticsearch#readme
-bug-reports: https://github.com/Siprj/haskell-file-elasticsearch/issues
+homepage: https://github.com/Siprj/tracer-bullerts
+bug-reports: https://github.com/Siprj/tracer-bullerts/issues
 author: Jan Šipr
 maintainer: sipr.jan@gmail.com
 copyright: Copyright: (c) 2022 Jan Šipr
 license: MIT
 license-file: LICENSE
 build-type: Simple
-tested-with: GHC==9.2.2 || ==9.2.1
+tested-with: GHC==9.2.2
 extra-doc-files: 
-  README.md
-  CHANGELOG.md
 
 source-repository head
   type: git
-  location: https://github.com/Siprj/haskell-file-elasticsearch
+  location: https://github.com/Siprj/tracer-bullerts
 
 flag pedantic
   description: Pass additional warning flags and -Werror to GHC.
@@ -66,5 +64,20 @@ executable haskell-file-elasticsearch
   hs-source-dirs: src
   main-is: Main.hs
 
+  other-modules:
+    Log.FileRotate
+
   build-depends: 
       base
+    , aeson
+    , bytestring
+    , effectful
+    , log-effectful
+    , rotating-log
+    , time-effectful
+    , time
+    , unix
+    , directory
+    , filepath
+    , text
+    , log-base

@@ -3,12 +3,6 @@ receivers:
     endpoint: "0.0.0.0:8006"
 
 exporters:
-  elasticsearch:
-    endpoints:
-      - http://elasticsearch:9200
-    user: elastic
-    password: password
-
   logging:
 
   influxdb:
@@ -31,15 +25,9 @@ exporters:
       max_elapsed_time: 10s
 
 extensions:
-  health_check:
-    check_collector_pipeline:
-      enabled: false
-      interval: "5m"
-      exporter_failure_threshold: 5
-  pprof:
 
 service:
-  extensions: [pprof, health_check]
+  extensions: []
   pipelines:
     logs:
       receivers: [fluentforward]

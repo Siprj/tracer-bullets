@@ -1,0 +1,48 @@
+receivers:
+  filelog:
+    include: [ /opt/app/logs/*.log ]
+    start_at: beginning
+    operators:
+      - type: json_parser
+        parse_from: body
+      - type: time_parser
+        parse_from: attributes.timestamp
+        layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+      - type: severity_parser
+        parse_from: attributes.severity_text
+        mapping:
+      - type: move
+        from: attributes.body
+        to: body
+      - type: remove
+        field: attributes.timestamp
+      - type: remove
+        field: attributes.severity_text
+
+exporters:
+  logging:
+    #    loglevel: debug
+
+  elasticsearch:
+    endpoints:
+    - "http://elasticsearch:9200"
+    user: elastic
+    password: changeme
+
+extensions:
+  health_check:
+    check_collector_pipeline:
+      enabled: false
+      interval: "5m"
+      exporter_failure_threshold: 5
+
+service:
+  extensions: [health_check]
+  telemetry:
+    logs:
+      #      level: "debug"
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: []
+      exporters: [elasticsearch, logging]

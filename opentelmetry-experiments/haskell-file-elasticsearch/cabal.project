@@ -1,0 +1,16 @@
+packages: .
+
+source-repository-package
+    type: git
+    location: https://github.com/haskell-effectful/log-effectful
+    tag: 4d135146bf530d757220b09c416a55074008eba2
+
+source-repository-package
+    type: git
+    location: https://github.com/haskell-effectful/time-effectful
+    tag: 3888f3e30077498816b45ae64b942c8d959a9617
+
+source-repository-package
+    type: git
+    location: https://github.com/Siprj/rotating-log
+    tag: a1917bc69f3a4e786b323e72a4a8358ba9540e20
