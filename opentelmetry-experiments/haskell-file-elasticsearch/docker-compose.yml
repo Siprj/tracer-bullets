@@ -8,12 +8,6 @@ services:
     depends_on:
       - opentelemetry-collector
     restart: always
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: tcp://127.0.0.1:8006
-        fluentd-async-connect: "true"
-        fluentd-sub-second-precision: "true"
     volumes:
       - service-logs:/opt/app/logs/
 
