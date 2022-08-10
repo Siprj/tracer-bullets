@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  log-gen:
+    build:
+      dockerfile: Dockerfile
+      target: log-gen
+    depends_on:
+      - opentelemetry-collector
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-format: rfc5424
+        syslog-address: tcp://127.0.0.1:54526
+    deploy:
+      resources:
+        limits:
+          memory: 400m
+        reservations:
+          memory: 200m
+
+  opentelemetry-collector:
+    image:  otel/opentelemetry-collector-contrib:0.54.0
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    depends_on:
+      - elasticsearch
+    ports:
+      - "127.0.0.1:54526:54526"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.2
+    environment:
+      xpack.security.enabled: "false"
+      discovery.type: single-node
+      LS_JAVA_OPTS: -Xmx2g -Xms2g"
+    ports:
+      - "127.0.0.1:9200:9200"
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 2g
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.2
+    restart: always
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    ports:
+      - "127.0.0.1:5601:5601"
+    depends_on:
+      - elasticsearch
+
+volumes:
+  service-logs:

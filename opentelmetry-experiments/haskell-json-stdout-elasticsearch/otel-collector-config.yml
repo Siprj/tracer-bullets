@@ -1,0 +1,45 @@
+receivers:
+  syslog:
+    tcp:
+      listen_address: "0.0.0.0:54526"
+    protocol: rfc5424
+    location: UTC
+    operators:
+      - type: json_parser
+        parse_from: attributes.message
+      - type: time_parser
+        parse_from: attributes.timestamp
+        layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+      - type: severity_parser
+        parse_from: attributes.severity_text
+        mapping:
+      - type: move
+        from: attributes.body
+        to: body
+      - type: remove
+        field: attributes.timestamp
+      - type: remove
+        field: attributes.message
+      - type: remove
+        field: attributes.severity_text
+
+exporters:
+  logging:
+
+  elasticsearch:
+    endpoints:
+    - "http://elasticsearch:9200"
+    user: elastic
+    password: changeme
+
+extensions:
+
+service:
+  extensions: []
+  telemetry:
+    logs:
+  pipelines:
+    logs:
+      receivers: [syslog]
+      processors: []
+      exporters: [elasticsearch, logging]
