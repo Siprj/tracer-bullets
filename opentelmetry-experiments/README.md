@@ -87,6 +87,12 @@ and decode the data using the `json_parser` operator. Then the cleanup is
 not needed and all the issues with synchronization using the file systems
 goes away.
 
-## 5. Experiment `elasticsearch`, `kibana`, `fluentd` driver and json logs
+## 5. Experiment `elasticsearch`, `kibana`, `syslog` driver and json logs
 
-TODO
+The configuration is a bit easier than with log rotate because there is no
+need to mount volumes and the code is also a bit simpler. The tricky part was
+to figure out how the get the `opentelemetry-collector` to parse the `json`
+data. Originaally the `fluentd` protocol was used but the receiver doesn't
+support operator so the switch to `syslog` was needed. After the switch there
+was an issue with UDP packet not being accepted by `opentelemetry-collector`
+(unknown cause) but this was resolved by using TCP instead.
