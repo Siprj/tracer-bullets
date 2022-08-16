@@ -96,3 +96,21 @@ data. Originaally the `fluentd` protocol was used but the receiver doesn't
 support operator so the switch to `syslog` was needed. After the switch there
 was an issue with UDP packet not being accepted by `opentelemetry-collector`
 (unknown cause) but this was resolved by using TCP instead.
+
+## 6. Experiment `loki`, `grafana`, `syslog` driver and json logs
+
+Mistakes were made. When the first experiment with `grafana` was done the
+expression was that it doesn't support some useful feature that `kibana`
+provides. For example the possibility to click at field and having logs
+being filtered by it seamed to be unreachable. It turns out that is no the
+case. Correct configuration and use of format `logfmt` or `json` format parsers
+does the trick.
+
+When it comes to the scenario it self the use of the `syslog` really
+simplifies the whole setup. The only thing that was a bit tricky was the use
+of `loki` exporter in the `opentelemetry-collector` where the default value
+for the `format` field was no the right one. THe `format` had to be set to
+`json`. After that the configuration of `grafana` streams is simple.
+
+SIDE NOTE: the provisioning capability of `grafana` is really nice though
+it is a bit incomplete. (Removing provisioned dashboard is pain)
