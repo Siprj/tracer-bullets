@@ -1,0 +1,52 @@
+version: "3.9"
+
+# Most of this configuration is shamelessly stolen from:
+# https://github.com/grafana/tempo/blob/main/example/docker-compose/otel-collector/docker-compose.yaml
+
+services:
+  synthetic-load-generator:
+    image: omnition/synthetic-load-generator:1.0.25
+    volumes:
+      - ./load-generator.json:/etc/load-generator.json
+    environment:
+      - TOPOLOGY_FILE=/etc/load-generator.json
+      - JAEGER_COLLECTOR_URL=http://opentelemetry-collector:14268
+
+  opentelemetry-collector:
+    image:  otel/opentelemetry-collector-contrib:0.54.0
+    volumes:
+      - ./otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    depends_on:
+      - tempo
+
+  tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "127.0.0.1:4317:4317"  # otlp grpc
+      - "127.0.0.1:3200:3200"
+
+  grafana:
+    image: grafana/grafana:9.1.0
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./grafana-provisioning/:/etc/grafana/provisioning
+      - ./grafana.ini/:/etc/grafana/grafana.ini
+    depends_on:
+      - tempo
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+  prometheus:
+    image: prom/prometheus:latest
+    command: [ "--config.file=/etc/prometheus.yaml", "--web.enable-remote-write-receiver" ]
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus.yaml
+    ports:
+      - "127.0.0.1:9090:9090"
