@@ -1,0 +1,28 @@
+cabal-version:      3.0
+name:               haskell-otel-example
+version:            0.1.0.0
+license:            MIT
+author:             Jan Sipr
+maintainer:         sipr.jan@gmail.com
+category:           Development
+build-type:         Simple
+
+executable haskell-otel-example
+  hs-source-dirs: app
+  main-is:        Main.hs
+  build-depends:
+    , base
+    , effectful-core
+    , exceptions
+    , otel-haskell-sdk
+    , text
+    , http-client
+    , http-types
+    , bytestring
+    , attoparsec
+    , memory
+
+  ghc-options:
+    -threaded -rtsopts -with-rtsopts=-N -Wall -Wcompat
+    -Wincomplete-record-updates -Wincomplete-uni-patterns
+    -Wmissing-export-lists -Wpartial-fields -Wredundant-constraints

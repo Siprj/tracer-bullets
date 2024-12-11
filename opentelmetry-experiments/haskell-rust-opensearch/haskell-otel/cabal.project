@@ -1,0 +1,6 @@
+packages: .
+
+source-repository-package
+    type: git
+    location: https://github.com/Siprj/otel-haskell-sdk/
+    tag: 82bd862ba27a6ab91effd2a15ac8f367604454fd

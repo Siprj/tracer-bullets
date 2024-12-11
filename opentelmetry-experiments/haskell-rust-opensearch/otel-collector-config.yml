@@ -1,0 +1,53 @@
+exporters:
+  debug:
+    verbosity: detailed
+
+  elasticsearch:
+    endpoint: http://opensearch-node1:9200
+
+  opensearch:
+    http:
+      endpoint: http://opensearch-node1:9200
+
+  otlp/2:
+    endpoint: data-prepper:21890
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+
+  otlp/3:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+
+  otlphttp/logs:
+    endpoint: "http://loki:3100/otlp"
+    tls:
+      insecure: true
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  otlp/2:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4319
+
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, opensearch, otlp/2, otlp/3]
+    metrics:
+      receivers: [otlp]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      exporters: [opensearch, otlphttp/logs]
