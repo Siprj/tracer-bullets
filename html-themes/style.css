@@ -1,0 +1,339 @@
+:root {
+  /*--bg-color: #0f1011;*/
+  --bg-color: hsl(129, 87%, 1.8%);
+  --bg-color-2: hsl(129, 40%, 1.8%);
+  --text-secondary-color: hsl(129, 87%, 62%);
+  --text-disabled-color: hsl(129, 87%, 20%);
+  /*--text-secondary-color: hsl(114, 45%, 60%);
+  --text-disabled-color: hsl(114, 45%, 20%);*/
+  --text-color: #ffffff;
+  --hover-text-color: hsl(114, 96%, 95%);
+}
+  /*--text-secondary-color: #74c76b;
+  --text-disabled-color: #74c76b;*/
+
+body {
+  background-color: var(--bg-color);
+  margin: 0px;
+  color: var(--text-color);
+}
+
+body, input {
+  font-family: "Adwaita Sans"
+}
+
+show {
+  display: flex;
+  width: 60%;
+  flex-direction: column;
+  margin: auto;
+}
+
+showcase {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1em;
+  height: 100%;
+  width: 100%;
+}
+
+element {
+  flex: 1;
+}
+
+input[type=input] {
+    width: 150px;
+}
+
+button.b1 {
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-color: var(--text-secondary-color);
+  color: var(--text-secondary-color);
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color); 
+  transition: all 0.3s;
+}
+
+button:hover:not([disabled]).b1 {
+  border-color: var(--hover-text-color);
+  color: var(--hover-text-color);
+}
+
+button:disabled.b1 {
+  background: var(--text-secondary-color);
+  color: var(--bg-color);
+  cursor: default;
+}
+
+
+button.b2 {
+  color: var(--text-secondary-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
+  padding-left: 1em;
+  padding-right: 1em;
+  text-shadow: currentColor 0 0 0.15em;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+}
+
+button:hover:not([disabled]).b2 {
+  color: var(--hover-text-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  text-shadow: currentColor 0 0 0.2em;
+}
+
+button:disabled.b2 {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+
+button.b3 {
+  color: var(--text-secondary-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+}
+
+button:hover:not([disabled]).b3 {
+  color: var(--hover-text-color);
+}
+
+button:disabled.b3 {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+
+button.b4 {
+  color: var(--text-secondary-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+}
+
+button:hover:not([disabled]).b4 {
+  color: var(--hover-text-color);
+}
+
+button:disabled.b4 {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+
+input[type=input].input1 {
+  color: var(--text-color);
+  background-color: var(--bg-color-2);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
+  border-color: var(--text-secondary-color);
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  outline: none;
+}
+
+input[type=input].input1:focus {
+  color: var(--text-color);
+  border-color: var(--hover-text-color);
+}
+
+label.input1 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+
+input[type=input].input2 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  outline: none;
+}
+
+input[type=input].input2:focus {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+input[type=input].input2:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+label.input2 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+
+input[type=input].input3 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  outline: none;
+}
+
+input[type=input].input3:focus {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+input[type=input].input3:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+label.input3 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+
+input[type=input].input4 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  outline: none;
+}
+
+input[type=input].input4:focus {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+input[type=input].input4:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+label.input4 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+
+input[type=input].float-input1 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin: 0.2em 0.2em;
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  display: inline-block;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  outline: none;
+}
+
+input[type=input].float-input1:focus {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+input[type=input].float-input1:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+label.float-input1 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
