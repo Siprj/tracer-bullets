@@ -12,11 +12,18 @@
   /*--text-secondary-color: #74c76b;
   --text-disabled-color: #74c76b;*/
 
+* {
+  padding: 0px;
+  margin: 0px;
+  border-width: 0px;
+}
+
 body {
   background-color: var(--bg-color);
   margin: 0px;
   color: var(--text-color);
 }
+
 
 body, input {
   font-family: "Adwaita Sans"
@@ -46,8 +53,12 @@ input[type=input] {
     width: 150px;
 }
 
+border {
+    width: 150px;
+}
+
 button.b1 {
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border: 0.15em;
   border-style: solid;
@@ -77,7 +88,7 @@ button:disabled.b1 {
 
 button.b2 {
   color: var(--text-secondary-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.15em;
   border-style: solid;
@@ -110,7 +121,7 @@ button:disabled.b2 {
 
 button.b3 {
   color: var(--text-secondary-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.15em;
   border-style: solid;
@@ -140,7 +151,7 @@ button:disabled.b3 {
 
 button.b4 {
   color: var(--text-secondary-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.1em;
   border-style: solid;
@@ -170,7 +181,7 @@ button:disabled.b4 {
 input[type=input].input1 {
   color: var(--text-color);
   background-color: var(--bg-color-2);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border: 0.15em;
   border-style: solid;
@@ -189,14 +200,14 @@ input[type=input].input1:focus {
 
 label.input1 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   display: inline-block;
 }
 
 
 input[type=input].input2 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.15em;
   border-style: solid;
@@ -225,14 +236,14 @@ input[type=input].input2:disabled {
 
 label.input2 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   display: inline-block;
 }
 
 
 input[type=input].input3 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.15em;
   border-style: solid;
@@ -261,14 +272,14 @@ input[type=input].input3:disabled {
 
 label.input3 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   display: inline-block;
 }
 
 
 input[type=input].input4 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.1em;
   border-style: solid;
@@ -277,7 +288,6 @@ input[type=input].input4 {
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
-  cursor: pointer;
   background-color: var(--bg-color);
   transition: all 0.3s;
   outline: none;
@@ -297,43 +307,419 @@ input[type=input].input4:disabled {
 
 label.input4 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.1em;
   display: inline-block;
 }
 
 
+border.float-input1  {
+  color: var(--text-color);
+  font-size: 1.1em;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 2em;
+  border-color: var(--text-secondary-color);
+  padding-left: 1em;
+  padding-top: 1.5em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  position: relative;
+}
+
 input[type=input].float-input1 {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: #00000000;
+  transition: all 0.3s;
+  outline: none;
+  border:none;
+}
+
+input[type=input].float-input1::placeholder {
+    opacity: 0;
+}
+
+input[type=input].float-input1:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+border.float-input1:focus-within > label.float-input1,
+label.float-input1:has(+ input.float-input1:not(:placeholder-shown)) {
+  transform:translateY(-1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+}
+
+label.float-input1 {
+  color: var(--text-color);
+  font-size: 1em;
+  position: absolute;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  transform:translateY(-0.75em);
+  padding: 0;
+  margin: 0;
+}
+
+
+border.float-input2  {
+  color: var(--text-color);
+  font-size: 1.1em;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
+  padding-left: 1em;
+  padding-top: 1.5em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  position: relative;
+}
+
+input[type=input].float-input2 {
+  color: var(--text-color);
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: #00000000;
+  transition: all 0.3s;
+  outline: none;
+  border:none;
+}
+
+input[type=input].float-input2::placeholder {
+    opacity: 0;
+}
+
+input[type=input].float-input2:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+border.float-input2:focus-within {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+border.float-input2:focus-within > label.float-input2,
+label.float-input2:has(+ input.float-input2:not(:placeholder-shown)) {
+  transform:translateY(-1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+}
+
+label.float-input2 {
+  color: var(--text-color);
+  font-size: 1em;
+  position: absolute;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  transform:translateY(-0.75em);
+  padding: 0;
+  margin: 0;
+}
+
+
+
+border.float-input3  {
+  color: var(--text-color);
+  font-size: 1.1em;
+  margin: 0.2em 0.2em;
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-top: 1.5em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  position: relative;
+}
+
+input[type=input].float-input3 {
+  color: var(--text-color);
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: #00000000;
+  transition: all 0.3s;
+  outline: none;
+  border:none;
+}
+
+input[type=input].float-input3::placeholder {
+    opacity: 0;
+}
+
+input[type=input].float-input3:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+border.float-input3:focus-within {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+border.float-input3:focus-within > label.float-input3,
+label.float-input3:has(+ input.float-input3:not(:placeholder-shown)) {
+  transform:translateY(-1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+}
+
+label.float-input3 {
+  color: var(--text-color);
+  font-size: 1em;
+  position: absolute;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  transform:translateY(-0.75em);
+  padding: 0;
+  margin: 0;
+}
+
+
+
+border.float-input4  {
+  color: var(--text-color);
+  font-size: 1.1em;
   margin: 0.2em 0.2em;
   border-width: 0.1em;
   border-style: solid;
   border-color: var(--text-secondary-color);
   box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
   padding-left: 1em;
+  padding-top: 1.5em;
   padding-right: 1em;
   display: inline-block;
-  cursor: pointer;
   background-color: var(--bg-color);
   transition: all 0.3s;
+  position: relative;
+}
+
+input[type=input].float-input4 {
+  color: var(--text-color);
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: #00000000;
+  transition: all 0.3s;
   outline: none;
+  border:none;
 }
 
-input[type=input].float-input1:focus {
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+input[type=input].float-input4::placeholder {
+    opacity: 0;
 }
 
-input[type=input].float-input1:disabled {
+input[type=input].float-input4:disabled {
   text-shadow: currentColor 0 0 0.1em;
   box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
 
-label.float-input1 {
-  color: var(--text-color);
-  font-size: 1.1rem;
-  display: inline-block;
+border.float-input4:focus-within {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
+border.float-input4:focus-within > label.float-input4,
+label.float-input4:has(+ input.float-input4:not(:placeholder-shown)) {
+  transform:translateY(-1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+}
+
+label.float-input4 {
+  color: var(--text-color);
+  font-size: 1em;
+  position: absolute;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  transform:translateY(-0.75em);
+  padding: 0;
+  margin: 0;
+}
+
+
+
+border.float-input5  {
+  color: var(--text-color);
+  font-size: 1.1em;
+  margin: 0.2em 0.2em;
+  border-width: 0 0 0.1em 0;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  padding-left: 1em;
+  padding-top: 1.5em;
+  padding-right: 1em;
+  display: inline-block;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  position: relative;
+}
+
+input[type=input].float-input5 {
+  color: var(--text-color);
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: #00000000;
+  transition: all 0.3s;
+  outline: none;
+  border:none;
+}
+
+input[type=input].float-input5::placeholder {
+    opacity: 0;
+}
+
+input[type=input].float-input5:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+border.float-input5:focus-within > label.float-input5,
+label.float-input5:has(+ input.float-input5:not(:placeholder-shown)) {
+  transform:translateY(-1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+}
+
+label.float-input5 {
+  position: absolute;
+  color: var(--text-color);
+  font-size: 1em;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  transform:translateY(-0.75em);
+  padding: 0;
+  margin: 0;
+}
+
+
+
+border.float-input6  {
+  color: var(--text-color);
+  font-size: 1.1em;
+  margin: 0.2em 0.2em;
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding-left: 1em;
+  padding-top: 0.8em;
+  padding-bottom: 0.3em;
+  padding-right: 1em;
+  display: inline-block;
+  position: relative;
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+}
+
+input[type=input].float-input6 {
+  color: var(--text-color);
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  background-color: #00000000;
+  transition: all 0.3s;
+  outline: none;
+  border:none;
+  display: absolute;
+  top: 0;
+  left: 0;
+}
+
+input[type=input].float-input6::placeholder {
+    opacity: 0;
+}
+
+input[type=input].float-input6:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  cursor: default;
+  color: var(--text-disabled-color);
+}
+
+border.float-input6:focus-within {
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+border.float-input6:focus-within > label.float-input6,
+label.float-input6:has(+ input.float-input6:not(:placeholder-shown)) {
+  transform:translate(-0.4em, -1.5em);
+  color: var(--text-secondary-color);
+  font-size: 0.8em;
+  background-color: var(--bg-color-2);
+  padding-right: 0.2em;
+  padding-left: 0.2em;
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  border-top: 0;
+  border-bottom: 0;
+}
+
+label.float-input6 {
+  color: var(--text-color);
+  font-size: 1em;
+  cursor: text;
+  width:inherit;
+  max-width:inherit;
+  overflow: clip;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  transition-duration:300ms;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+}
