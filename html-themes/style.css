@@ -642,38 +642,64 @@ label.float-input6 {
 }
 
 div.form-line {
-    display: block;
-    margin-top: 0.5em;
+  display: block;
+  margin-top: 0.5em;
 }
 
-form.login-form {
-    width: 300px;
+form.login-form1, form.login-form2, form.login-form3, form.login-form4 {
+  width: 300px;
 }
 
 div.form-line > label {
-    display: block;
+  display: block;
 }
 
 div.form-line > input {
-    display: block;
-    width: 100%;
-    padding-bottom: 0.4em;
-    padding-top: 0.4em;
+  display: block;
+  width: 100%;
+  padding-bottom: 0.4em;
+  padding-top: 0.4em;
 }
 
 div.form-line:has(button) {
-    text-align: right;
+  text-align: right;
 }
 
 div.login-title {
-    font-size: 1.5em;
-    margin-bottom: 0.5em;
-    text-align: center;
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+  text-align: center;
 }
 
-form.login-form {
-    border-width: 0.2em;
-    border-style: solid;
-    border-color: var(--text-secondary-color);
-    padding: 1em;
+form.login-form1 {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  padding: 1em;
+}
+
+form.login-form2 {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
+  padding: 1em;
+}
+
+form.login-form3 {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding: 1em;
+}
+
+form.login-form4 {
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  padding: 1em;
 }
