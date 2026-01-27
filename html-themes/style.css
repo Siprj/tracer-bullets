@@ -713,7 +713,7 @@ form.login-form1 {
 }
 
 /*
- * Button Style 2
+ * button style 2
  */
 
 .b2-text-shadow {
@@ -721,7 +721,7 @@ form.login-form1 {
 }
 
 /*
- * Checkmark Styles
+ * checkmark styles
  */
 
 input[type="checkbox"]:checked::after {
@@ -739,4 +739,50 @@ input[type="checkbox"].border-4:checked::after {
   left: 0.1em;
   font-weight: bold;
   position: relative;
+}
+
+/*
+ * radio button styles
+ */
+
+input[type=radio] {
+  vertical-align: middle;
+  cursor: pointer;
+  width: 1.2em;
+  height: 1.2em;
+  appearance: none;
+  border-radius: 50%;
+  border-width: 0.15em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  background-color: var(--bg-color);
+  transition: all 0.3s;
+  margin-right: 0.3em;
+}
+
+input[type=radio]:checked {
+  border-color: var(--hover-text-color);
+  background-color: var(--text-secondary-color);
+}
+
+input[type=radio]:disabled {
+  cursor: default;
+  border-color: var(--text-disabled-color);
+  background-color: var(--bg-color-2);
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  display: block;
+  width: 0.6em;
+  height: 0.6em;
+  margin: 0.2em auto;
+  border-radius: 50%;
+  background: var(--text-color);
+}
+
+input[type="radio"].border-4:checked::after {
+  width: 0.7em;
+  height: 0.7em;
+  margin: 0.15em auto;
 }
