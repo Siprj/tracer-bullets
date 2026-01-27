@@ -10,7 +10,9 @@ The font size is always in `rem` unless really necessary. Which is probably neve
 
 ## Margin and padding
 
-Also in `rem` since it simplifies the handling of things.
+Also in `rem` since it simplifies the handling of things. Unless it is part of
+some visual element where it would be dependant on the font size. Like button
+with half-circle ends.
 
 ## CSS classes
 
