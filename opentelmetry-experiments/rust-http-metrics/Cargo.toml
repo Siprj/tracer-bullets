@@ -15,6 +15,6 @@ opentelemetry-stdout = "0.27.0"
 opentelemetry_sdk = "0.27.1"
 rand = "0.8.5"
 serde = { version = "1.0.216", features = ["serde_derive", "std"] }
-tokio = { version = "1.42.0", features = ["full"] }
+tokio = { version = "1.43.1", features = ["full"] }
 tonic = "0.12.3"
 tracing = "0.1.41"
