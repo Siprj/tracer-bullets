@@ -22,6 +22,7 @@ body {
   background-color: var(--bg-color);
   margin: 0px;
   color: var(--text-color);
+  padding-bottom: 2em;
 }
 
 
@@ -54,10 +55,23 @@ element {
   flex: 1;
 }
 
+input[type=text], input[type=password], input[type=input] {
+  outline: none;
+}
+
 input {
   width: 13em;
-  outline: none;
+  appearance: none;
   transition: all 0.3s;
+}
+
+input[type=checkbox] {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+input[type=checkbox]:disabled {
+  cursor: default;
 }
 
 border {
@@ -474,6 +488,9 @@ form.login-form1 {
 }
 
 .border-1-disabled:disabled {
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
   background: var(--text-secondary-color);
 }
 
@@ -506,6 +523,9 @@ form.login-form1 {
 }
 
 .border-2-disabled:disabled {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
   text-shadow: currentColor 0 0 0.1em;
   box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
   border-color: currentColor;
@@ -540,6 +560,9 @@ form.login-form1 {
 }
 
 .border-3-disabled:disabled {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
   text-shadow: currentColor 0 0 0.1em;
   box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
   border-color: currentColor;
@@ -571,6 +594,8 @@ form.login-form1 {
 }
 
 .border-4-disabled:disabled {
+  border-width: 0.1em;
+  border-style: solid;
   text-shadow: currentColor 0 0 0.1em;
   box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
   border-color: currentColor;
@@ -623,12 +648,28 @@ form.login-form1 {
   display: inline-block;
 }
 
+.none {
+  display: none;
+}
+
 /*
  * width
  */
 
 .width-100 {
   width: 100%;
+}
+
+.width-1-2 {
+  width: 1.2em;
+}
+
+/*
+ * height
+ */
+
+.height-1-2 {
+  height: 1.2em;
 }
 
 /*
@@ -677,4 +718,25 @@ form.login-form1 {
 
 .b2-text-shadow {
   text-shadow: currentColor 0 0 0.15em;
+}
+
+/*
+ * Checkmark Styles
+ */
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: var(--text-color);
+  top: -0.2em;
+  font-weight: bold;
+  position: relative;
+}
+
+input[type="checkbox"].border-4:checked::after {
+  content: "✓";
+  color: var(--text-color);
+  top: -0.1em;
+  left: 0.1em;
+  font-weight: bold;
+  position: relative;
 }
