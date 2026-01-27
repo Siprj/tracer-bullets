@@ -55,11 +55,13 @@ element {
 }
 
 input {
-    width: 13em;
+  width: 13em;
+  outline: none;
+  transition: all 0.3s;
 }
 
 border {
-    width: 13em;
+  width: 13em;
 }
 
 button {
@@ -71,61 +73,6 @@ button {
 button:disabled {
   cursor: default;
 }
-
-input[type=input].input2, input[type=password].input2 {
-  color: var(--text-color);
-  margin: 0.2em 0.0em;
-  background-color: var(--bg-color);
-  transition: all 0.3s;
-  outline: none;
-}
-
-input[type=input].input2:disabled, input[type=password].input2:disabled {
-  color: var(--text-disabled-color);
-}
-
-label.input2 {
-  color: var(--text-color);
-}
-
-
-input[type=input].input3, input[type=password].input3 {
-  color: var(--text-color);
-  margin: 0.2em 0.0em;
-  background-color: var(--bg-color);
-  transition: all 0.3s;
-  outline: none;
-}
-
-input[type=input].input3:focus, input[type=password].input3:focus {
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
-}
-
-input[type=input].input3:disabled, input[type=password].input3:disabled {
-  color: var(--text-disabled-color);
-}
-
-label.input3 {
-  color: var(--text-color);
-}
-
-
-input[type=input].input4, input[type=password].input4 {
-  color: var(--text-color);
-  margin: 0.2em 0.0em;
-  background-color: var(--bg-color);
-  transition: all 0.3s;
-  outline: none;
-}
-
-input[type=input].input4:disabled, input[type=password].input4:disabled {
-  color: var(--text-disabled-color);
-}
-
-label.input4 {
-  color: var(--text-color);
-}
-
 
 border.float-input2  {
   color: var(--text-color);
