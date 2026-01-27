@@ -65,12 +65,8 @@ border {
 button.b1 {
   font-size: 1.1em;
   margin: 0.2em 0em;
-  border: 0.15em;
-  border-style: solid;
-  border-radius: 1em;
   padding-left: 1em;
   padding-right: 1em;
-  border-color: var(--text-secondary-color);
   color: var(--text-secondary-color);
   text-decoration: none;
   display: inline-block;
@@ -80,26 +76,18 @@ button.b1 {
 }
 
 button:hover:not([disabled]).b1 {
-  border-color: var(--hover-text-color);
   color: var(--hover-text-color);
 }
 
 button:disabled.b1 {
-  background: var(--text-secondary-color);
   color: var(--bg-color);
   cursor: default;
 }
-
 
 button.b2 {
   color: var(--text-secondary-color);
   font-size: 1.1em;
   margin: 0.2em 0em;
-  border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.2em;
-  border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
   padding-left: 1em;
   padding-right: 1em;
   text-shadow: currentColor 0 0 0.15em;
@@ -111,14 +99,9 @@ button.b2 {
 
 button:hover:not([disabled]).b2 {
   color: var(--hover-text-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
-  text-shadow: currentColor 0 0 0.2em;
 }
 
 button:disabled.b2 {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
@@ -128,11 +111,6 @@ button.b3 {
   color: var(--text-secondary-color);
   font-size: 1.1em;
   margin: 0.2em 0em;
-  border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.4em;
-  border-color: var(--text-secondary-color);
-  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
@@ -143,26 +121,17 @@ button.b3 {
 
 button:hover:not([disabled]).b3 {
   color: var(--hover-text-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
 button:disabled.b3 {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
-
 
 button.b4 {
   color: var(--text-secondary-color);
   font-size: 1.1em;
   margin: 0.2em 0em;
-  border-width: 0.1em;
-  border-style: solid;
-  border-color: var(--text-secondary-color);
-  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
@@ -173,13 +142,9 @@ button.b4 {
 
 button:hover:not([disabled]).b4 {
   color: var(--hover-text-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
 button:disabled.b4 {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
@@ -189,11 +154,6 @@ input[type=input].input2, input[type=password].input2 {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
-  border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.2em;
-  border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
@@ -202,14 +162,7 @@ input[type=input].input2, input[type=password].input2 {
   outline: none;
 }
 
-input[type=input].input2:focus, input[type=password].input2:focus {
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
-}
-
 input[type=input].input2:disabled, input[type=password].input2:disabled {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
@@ -225,11 +178,6 @@ input[type=input].input3, input[type=password].input3 {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
-  border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.4em;
-  border-color: var(--text-secondary-color);
-  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
@@ -243,9 +191,6 @@ input[type=input].input3:focus, input[type=password].input3:focus {
 }
 
 input[type=input].input3:disabled, input[type=password].input3:disabled {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
@@ -261,10 +206,6 @@ input[type=input].input4, input[type=password].input4 {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
-  border-width: 0.1em;
-  border-style: solid;
-  border-color: var(--text-secondary-color);
-  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   display: inline-block;
@@ -273,14 +214,7 @@ input[type=input].input4, input[type=password].input4 {
   outline: none;
 }
 
-input[type=input].input4:focus, input[type=password].input4:focus {
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
-}
-
 input[type=input].input4:disabled, input[type=password].input4:disabled {
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: inset currentColor 0 0 0.1em;
-  border-color: currentColor;
   cursor: default;
   color: var(--text-disabled-color);
 }
@@ -296,11 +230,6 @@ border.float-input2  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
-  border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.2em;
-  border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
   padding-left: 1em;
   padding-top: 1.5em;
   padding-right: 1em;
@@ -319,7 +248,6 @@ input[type=input].float-input2 {
   background-color: #00000000;
   transition: all 0.3s;
   outline: none;
-  border:none;
 }
 
 input[type=input].float-input2::placeholder {
@@ -646,8 +574,9 @@ div.form-line {
   margin-top: 0.5em;
 }
 
-form.login-form1, form.login-form2, form.login-form3, form.login-form4 {
+form {
   width: 300px;
+  padding: 1em;
 }
 
 div.form-line > label {
@@ -678,28 +607,130 @@ form.login-form1 {
   padding: 1em;
 }
 
-form.login-form2 {
+/*
+ * Border Styles 1
+ */
+
+.border-1 {
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
+  border-color: var(--text-secondary-color);
+}
+
+.border-1-hover:hover:not([disabled]) {
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
+  border-color: var(--hover-text-color);
+}
+
+.border-1-focus:focus:not([disabled]) {
+  border: 0.15em;
+  border-style: solid;
+  border-radius: 1em;
+  border-color: var(--hover-text-color);
+}
+
+.border-1-disabled:disabled {
+  background: var(--text-secondary-color);
+}
+
+/*
+ * Border Styles 2
+ */
+
+.border-2 {
   border-width: 0.15em;
   border-style: solid;
   border-radius: 0.2em;
   border-color: var(--text-secondary-color);
   box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
-  padding: 1em;
 }
 
-form.login-form3 {
+.border-2-hover:hover:not([disabled]) {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-2-focus:focus:not([disabled]) {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.2em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-2-disabled:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+}
+
+/*
+ * Border Styles 3
+ */
+
+.border-3 {
   border-width: 0.15em;
   border-style: solid;
   border-radius: 0.4em;
   border-color: var(--text-secondary-color);
-  box-shadow: inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
-  padding: 1em;
+  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
 }
 
-form.login-form4 {
+.border-3-hover:hover:not([disabled]) {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-3-focus:focus:not([disabled]) {
+  border-width: 0.15em;
+  border-style: solid;
+  border-radius: 0.4em;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-3-disabled:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
+}
+
+/*
+ * Border Styles 4
+ */
+
+.border-4 {
   border-width: 0.1em;
   border-style: solid;
   border-color: var(--text-secondary-color);
   box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
-  padding: 1em;
+}
+
+.border-4-hover:hover:not([disabled]) {
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-4-focus:focus:not([disabled]) {
+  border-width: 0.1em;
+  border-style: solid;
+  border-color: var(--text-secondary-color);
+  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+}
+
+.border-4-disabled:disabled {
+  text-shadow: currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-color: currentColor;
 }
