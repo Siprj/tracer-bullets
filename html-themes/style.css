@@ -54,7 +54,7 @@ element {
   flex: 1;
 }
 
-input[type=input] {
+input {
     width: 13em;
 }
 
@@ -67,74 +67,14 @@ button {
   cursor: pointer;
   transition: all 0.3s;
 }
+
 button:disabled {
   cursor: default;
 }
 
-button.b1 {
-  color: var(--text-secondary-color);
-  background-color: var(--bg-color);
-}
-
-button:hover:not([disabled]).b1 {
-  color: var(--hover-text-color);
-}
-
-button:disabled.b1 {
-  color: var(--bg-color);
-}
-
-button.b2 {
-  color: var(--text-secondary-color);
-  font-size: 1.1em;
-  text-shadow: currentColor 0 0 0.15em;
-  background-color: var(--bg-color);
-}
-
-button:hover:not([disabled]).b2 {
-  color: var(--hover-text-color);
-}
-
-button:disabled.b2 {
-  color: var(--text-disabled-color);
-}
-
-
-button.b3 {
-  color: var(--text-secondary-color);
-  font-size: 1.1em;
-  background-color: var(--bg-color);
-  transition: all 0.3s;
-}
-
-button:hover:not([disabled]).b3 {
-  color: var(--hover-text-color);
-}
-
-button:disabled.b3 {
-  color: var(--text-disabled-color);
-}
-
-button.b4 {
-  color: var(--text-secondary-color);
-  font-size: 1.1em;
-  background-color: var(--bg-color);
-}
-
-button:hover:not([disabled]).b4 {
-  color: var(--hover-text-color);
-}
-
-button:disabled.b4 {
-  color: var(--text-disabled-color);
-}
-
-
 input[type=input].input2, input[type=password].input2 {
   color: var(--text-color);
-  font-size: 1.1em;
   margin: 0.2em 0.0em;
-  display: inline-block;
   background-color: var(--bg-color);
   transition: all 0.3s;
   outline: none;
@@ -146,16 +86,12 @@ input[type=input].input2:disabled, input[type=password].input2:disabled {
 
 label.input2 {
   color: var(--text-color);
-  font-size: 1.1em;
-  display: inline-block;
 }
 
 
 input[type=input].input3, input[type=password].input3 {
   color: var(--text-color);
-  font-size: 1.1em;
   margin: 0.2em 0.0em;
-  display: inline-block;
   background-color: var(--bg-color);
   transition: all 0.3s;
   outline: none;
@@ -171,16 +107,12 @@ input[type=input].input3:disabled, input[type=password].input3:disabled {
 
 label.input3 {
   color: var(--text-color);
-  font-size: 1.1em;
-  display: inline-block;
 }
 
 
 input[type=input].input4, input[type=password].input4 {
   color: var(--text-color);
-  font-size: 1.1em;
   margin: 0.2em 0.0em;
-  display: inline-block;
   background-color: var(--bg-color);
   transition: all 0.3s;
   outline: none;
@@ -192,8 +124,6 @@ input[type=input].input4:disabled, input[type=password].input4:disabled {
 
 label.input4 {
   color: var(--text-color);
-  font-size: 1.1em;
-  display: inline-block;
 }
 
 
@@ -554,13 +484,6 @@ div.form-line > label {
   display: block;
 }
 
-div.form-line > input {
-  display: block;
-  width: 100%;
-  padding-bottom: 0.4em;
-  padding-top: 0.4em;
-}
-
 div.form-line:has(button) {
   text-align: right;
 }
@@ -583,8 +506,6 @@ form.login-form1 {
  */
 
 .border-1 {
-  padding-left: 1em;
-  padding-right: 1em;
   border: 0.15em;
   border-style: solid;
   border-radius: 1em;
@@ -592,8 +513,6 @@ form.login-form1 {
 }
 
 .border-1-hover:hover:not([disabled]) {
-  padding-left: 1em;
-  padding-right: 1em;
   border: 0.15em;
   border-style: solid;
   border-radius: 1em;
@@ -601,8 +520,6 @@ form.login-form1 {
 }
 
 .border-1-focus:focus:not([disabled]) {
-  padding-left: 1em;
-  padding-right: 1em;
   border: 0.15em;
   border-style: solid;
   border-radius: 1em;
@@ -610,8 +527,6 @@ form.login-form1 {
 }
 
 .border-1-disabled:disabled {
-  padding-left: 1em;
-  padding-right: 1em;
   background: var(--text-secondary-color);
 }
 
@@ -622,8 +537,6 @@ form.login-form1 {
 .border-2 {
   border-width: 0.15em;
   border-style: solid;
-  padding-left: 1em;
-  padding-right: 1em;
   border-radius: 0.2em;
   border-color: var(--text-secondary-color);
   box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
@@ -658,8 +571,6 @@ form.login-form1 {
 .border-3 {
   border-width: 0.15em;
   border-style: solid;
-  padding-left: 1em;
-  padding-right: 1em;
   border-radius: 0.4em;
   border-color: var(--text-secondary-color);
   box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
@@ -694,8 +605,6 @@ form.login-form1 {
 .border-4 {
   border-width: 0.1em;
   border-style: solid;
-  padding-left: 1em;
-  padding-right: 1em;
   border-color: var(--text-secondary-color);
   box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
 }
@@ -726,9 +635,99 @@ form.login-form1 {
  */
 
 .text-base {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
-.text-l {
-    font-size: 1.25rem;
+.text-1-1 {
+  font-size: 1.1rem;
+}
+
+.text-1-5 {
+  font-size: 1.5rem;
+}
+
+/*
+ * padding
+ */
+
+.padding-lr-1 {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.padding-tb-0-4 {
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+}
+
+/*
+ * display
+ */
+
+.inline {
+  display: inline;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+/*
+ * width
+ */
+
+.width-100 {
+  width: 100%;
+}
+
+/*
+ * color
+ */
+
+.color-primary {
+  color: var(--text-color);
+}
+
+.color-primary-hover:hover {
+  color: var(--text-color);
+}
+
+.color-secondary {
+  color: var(--text-secondary-color);
+}
+
+.color-secondary-hover:hover {
+  color: var(--text-secondary-color);
+}
+
+.color-inverted-primary {
+  color: var(--bg-color);
+}
+
+.color-disabled-primary {
+  color: var(--text-disabled-color);
+}
+
+/*
+ * background color
+ */
+
+.bg-primary {
+  background-color: var(--bg-color);
+}
+
+.bg-secondary {
+  background-color: var(--bg-color-2);
+}
+
+/*
+ * Button Style 2
+ */
+
+.b2-text-shadow {
+  text-shadow: currentColor 0 0 0.15em;
 }
