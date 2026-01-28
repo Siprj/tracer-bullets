@@ -508,16 +508,12 @@ form.login-form1 {
 
 .border-2-hover:hover:not([disabled]) {
   border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.2em;
   border-color: var(--text-secondary-color);
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
 .border-2-focus:focus:not([disabled]) {
   border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.2em;
   border-color: var(--text-secondary-color);
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
@@ -545,8 +541,6 @@ form.login-form1 {
 
 .border-3-hover:hover:not([disabled]) {
   border-width: 0.15em;
-  border-style: solid;
-  border-radius: 0.4em;
   border-color: var(--text-secondary-color);
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
@@ -653,6 +647,14 @@ form.login-form1 {
 }
 
 /*
+ * position
+ */
+
+.position-relative {
+  position: relative;
+}
+
+/*
  * width
  */
 
@@ -725,20 +727,24 @@ form.login-form1 {
  */
 
 input[type="checkbox"]:checked::after {
+  display: block;
   content: "✓";
+  text-align: center;
   color: var(--text-color);
-  top: -0.2em;
   font-weight: bold;
+  top: 50%;
+  left: 50%;
   position: relative;
+  transform: translate(-50%, -50%);
 }
 
 input[type="checkbox"].border-4:checked::after {
   content: "✓";
   color: var(--text-color);
-  top: -0.1em;
-  left: 0.1em;
   font-weight: bold;
-  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /*
@@ -746,43 +752,39 @@ input[type="checkbox"].border-4:checked::after {
  */
 
 input[type=radio] {
+  will-change: transform;
   vertical-align: middle;
   cursor: pointer;
-  width: 1.2em;
-  height: 1.2em;
-  appearance: none;
+  display: inline-block;
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 50%;
-  border-width: 0.15em;
-  border-style: solid;
-  border-color: var(--text-secondary-color);
-  background-color: var(--bg-color);
   transition: all 0.3s;
   margin-right: 0.3em;
 }
 
-input[type=radio]:checked {
-  border-color: var(--hover-text-color);
-  background-color: var(--text-secondary-color);
-}
-
 input[type=radio]:disabled {
+  will-change: transform;
   cursor: default;
+  border-radius: 50%;
   border-color: var(--text-disabled-color);
   background-color: var(--bg-color-2);
 }
 
 input[type="radio"]:checked::after {
+  will-change: transform;
   content: "";
-  display: block;
-  width: 0.6em;
-  height: 0.6em;
-  margin: 0.2em auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.5em;
+  height: 0.5em;
   border-radius: 50%;
   background: var(--text-color);
 }
 
-input[type="radio"].border-4:checked::after {
-  width: 0.7em;
-  height: 0.7em;
-  margin: 0.15em auto;
+input[type="radio"] + label {
+  vertical-align: middle;
 }
