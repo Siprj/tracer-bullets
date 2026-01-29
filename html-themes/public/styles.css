@@ -16,6 +16,7 @@
   padding: 0px;
   margin: 0px;
   border-width: 0px;
+  box-sizing: border-box;
 }
 
 body {
@@ -35,14 +36,14 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.5em;
 }
 
-show {
+.show {
   display: flex;
   width: 60%;
   flex-direction: column;
   margin: auto;
 }
 
-showcase {
+.showcase {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -51,8 +52,10 @@ showcase {
   width: 100%;
 }
 
-element {
+.element {
   flex: 1;
+  gap: 0.5rem;
+  display: flex;
 }
 
 input[type=text], input[type=password], input[type=input], input[type=email], input[type=number], input[type=url], input[type=tel], input[type=search], textarea {
@@ -87,7 +90,7 @@ input[type=radio] {
   will-change: transform;
 }
 
-border {
+.border {
   width: 13em;
 }
 
@@ -101,7 +104,7 @@ button:disabled {
   cursor: default;
 }
 
-border.float-input2  {
+.border.float-input2  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
@@ -123,6 +126,7 @@ input[type=input].float-input2 {
   background-color: #00000000;
   transition: all 0.3s;
   outline: none;
+  padding-right: 2em;
 }
 
 input[type=input].float-input2::placeholder {
@@ -136,11 +140,11 @@ input[type=input].float-input2:disabled {
   color: var(--text-disabled-color);
 }
 
-border.float-input2:focus-within {
+.border.float-input2:focus-within {
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
-border.float-input2:focus-within > label.float-input2,
+.border.float-input2:focus-within > label.float-input2,
 label.float-input2:has(+ input.float-input2:not(:placeholder-shown)) {
   transform:translateY(-1.5em);
   color: var(--text-secondary-color);
@@ -152,20 +156,20 @@ label.float-input2 {
   font-size: 1em;
   position: absolute;
   cursor: text;
-  width:inherit;
+  width:100%;
   max-width:inherit;
   overflow: clip;
   text-wrap: nowrap;
   text-overflow: ellipsis;
   transition-duration:300ms;
   transform:translateY(-0.75em);
-  padding: 0;
+  padding-right: 2em;
   margin: 0;
 }
 
 
 
-border.float-input3  {
+.border.float-input3  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
@@ -193,6 +197,7 @@ input[type=input].float-input3 {
   transition: all 0.3s;
   outline: none;
   border:none;
+  padding-right: 2em;
 }
 
 input[type=input].float-input3::placeholder {
@@ -206,11 +211,11 @@ input[type=input].float-input3:disabled {
   color: var(--text-disabled-color);
 }
 
-border.float-input3:focus-within {
+.border.float-input3:focus-within {
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
-border.float-input3:focus-within > label.float-input3,
+.border.float-input3:focus-within > label.float-input3,
 label.float-input3:has(+ input.float-input3:not(:placeholder-shown)) {
   transform:translateY(-1.5em);
   color: var(--text-secondary-color);
@@ -229,13 +234,13 @@ label.float-input3 {
   text-overflow: ellipsis;
   transition-duration:300ms;
   transform:translateY(-0.75em);
-  padding: 0;
+  padding-right: 2em;
   margin: 0;
 }
 
 
 
-border.float-input4  {
+.border.float-input4  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
@@ -255,13 +260,13 @@ border.float-input4  {
 input[type=input].float-input4 {
   color: var(--text-color);
   font-size: 1em;
-  padding: 0;
   margin: 0;
   display: inline-block;
   background-color: #00000000;
   transition: all 0.3s;
   outline: none;
   border:none;
+  padding-right: 2em;
 }
 
 input[type=input].float-input4::placeholder {
@@ -275,11 +280,11 @@ input[type=input].float-input4:disabled {
   color: var(--text-disabled-color);
 }
 
-border.float-input4:focus-within {
+.border.float-input4:focus-within {
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
-border.float-input4:focus-within > label.float-input4,
+.border.float-input4:focus-within > label.float-input4,
 label.float-input4:has(+ input.float-input4:not(:placeholder-shown)) {
   transform:translateY(-1.5em);
   color: var(--text-secondary-color);
@@ -298,13 +303,13 @@ label.float-input4 {
   text-overflow: ellipsis;
   transition-duration:300ms;
   transform:translateY(-0.75em);
-  padding: 0;
   margin: 0;
+  padding-right: 2em;
 }
 
 
 
-border.float-input5  {
+.border.float-input5  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
@@ -323,13 +328,13 @@ border.float-input5  {
 input[type=input].float-input5 {
   color: var(--text-color);
   font-size: 1em;
-  padding: 0;
   margin: 0;
   display: inline-block;
   background-color: #00000000;
   transition: all 0.3s;
   outline: none;
   border:none;
+  padding-right: 2em;
 }
 
 input[type=input].float-input5::placeholder {
@@ -342,7 +347,7 @@ input[type=input].float-input5:disabled {
   color: var(--text-disabled-color);
 }
 
-border.float-input5:focus-within > label.float-input5,
+.border.float-input5:focus-within > label.float-input5,
 label.float-input5:has(+ input.float-input5:not(:placeholder-shown)) {
   transform:translateY(-1.5em);
   color: var(--text-secondary-color);
@@ -361,13 +366,13 @@ label.float-input5 {
   text-overflow: ellipsis;
   transition-duration:300ms;
   transform:translateY(-0.75em);
-  padding: 0;
   margin: 0;
+  padding-right: 2em;
 }
 
 
 
-border.float-input6  {
+.border.float-input6  {
   color: var(--text-color);
   font-size: 1.1em;
   margin: 0.2em 0.0em;
@@ -388,7 +393,6 @@ border.float-input6  {
 input[type=input].float-input6 {
   color: var(--text-color);
   font-size: 1em;
-  padding: 0;
   margin: 0;
   background-color: #00000000;
   transition: all 0.3s;
@@ -397,6 +401,7 @@ input[type=input].float-input6 {
   display: absolute;
   top: 0;
   left: 0;
+  padding-right: 2em;
 }
 
 input[type=input].float-input6::placeholder {
@@ -410,11 +415,11 @@ input[type=input].float-input6:disabled {
   color: var(--text-disabled-color);
 }
 
-border.float-input6:focus-within {
+.border.float-input6:focus-within {
   box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
 }
 
-border.float-input6:focus-within > label.float-input6,
+.border.float-input6:focus-within > label.float-input6,
 label.float-input6:has(+ input.float-input6:not(:placeholder-shown)) {
   transform:translate(-0.4em, -1.5em);
   color: var(--text-secondary-color);
@@ -439,9 +444,9 @@ label.float-input6 {
   text-wrap: nowrap;
   text-overflow: ellipsis;
   transition-duration:300ms;
-  padding: 0;
   margin: 0;
   position: absolute;
+  padding-right: 2em;
 }
 
 div.form-line {
@@ -688,6 +693,10 @@ form.login-form1 {
   height: 1.2rem;
 }
 
+.height-1-5rem {
+  height: 2rem;
+}
+
 /*
  * color
  */
@@ -743,6 +752,14 @@ form.login-form1 {
 .size-1-5rem {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+/*
+ * box-sizing
+ */
+
+.box-border {
+  box-sizing: border-box;
 }
 
 /*
