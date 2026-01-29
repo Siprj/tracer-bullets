@@ -10,7 +10,8 @@ The font size is always in `rem` unless really necessary. Which is probably neve
 
 ## Margin and padding
 
-In `em` since it simplifies the handling of things.
+In `rem` since it simplifies the handling of things. Unless is it part of the
+typgraphy ten it should be in `em`.
 
 ## CSS classes
 

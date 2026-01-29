@@ -66,12 +66,25 @@ input {
 }
 
 input[type=checkbox] {
-  vertical-align: middle;
   cursor: pointer;
 }
 
 input[type=checkbox]:disabled {
   cursor: default;
+}
+
+input[type=radio] {
+  cursor: pointer;
+}
+
+input[type=radio]:disabled {
+  cursor: default;
+}
+
+/* This is hre since radion buttons are usually circular and broswers can have
+   issues while rendering cocentric circles with sub-pixel antialiasing. */
+input[type=radio] {
+  will-change: transform;
 }
 
 border {
@@ -467,28 +480,26 @@ form.login-form1 {
  */
 
 .border-1 {
-  border: 0.15em;
+  border: calc(3rem / 16);
   border-style: solid;
   border-radius: 1em;
   border-color: var(--text-secondary-color);
 }
 
 .border-1-hover:hover:not([disabled]) {
-  border: 0.15em;
   border-style: solid;
   border-radius: 1em;
   border-color: var(--hover-text-color);
 }
 
 .border-1-focus:focus:not([disabled]) {
-  border: 0.15em;
   border-style: solid;
   border-radius: 1em;
   border-color: var(--hover-text-color);
 }
 
 .border-1-disabled:disabled {
-  border: 0.15em;
+  border: calc(3rem / 16);
   border-style: solid;
   border-radius: 1em;
   background: var(--text-secondary-color);
@@ -499,31 +510,29 @@ form.login-form1 {
  */
 
 .border-2 {
-  border-width: 0.15em;
+  border-width: calc(3rem / 16);
   border-style: solid;
-  border-radius: 0.2em;
+  border-radius: calc(4rem / 16);
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.15em, inset var(--text-secondary-color) 0 0 0.15em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(3rem / 16), inset var(--text-secondary-color) 0 0 calc(3rem / 16);
 }
 
 .border-2-hover:hover:not([disabled]) {
-  border-width: 0.15em;
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(5rem / 16), inset var(--text-secondary-color) 0 0 calc(5rem / 16);
 }
 
 .border-2-focus:focus:not([disabled]) {
-  border-width: 0.15em;
+  border-width: calc(3rem / 16);
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(5rem / 16), inset var(--text-secondary-color) 0 0 calc(5rem / 16);
 }
 
-.border-2-disabled:disabled {
-  border-width: 0.15em;
+.border-2-disabled {
+  border-width: calc(3rem / 16);
   border-style: solid;
-  border-radius: 0.2em;
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-radius: calc(4rem / 16);
+  box-shadow: currentColor 0 0 calc(2rem / 16), inset currentColor 0 0 calc(2rem / 16);
   border-color: currentColor;
 }
 
@@ -532,33 +541,29 @@ form.login-form1 {
  */
 
 .border-3 {
-  border-width: 0.15em;
+  border-width: calc(3rem / 16);
   border-style: solid;
-  border-radius: 0.4em;
+  border-radius: calc(6rem / 16);
   border-color: var(--text-secondary-color);
-  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 calc(10rem / 16);
 }
 
 .border-3-hover:hover:not([disabled]) {
-  border-width: 0.15em;
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(5rem / 16), inset var(--text-secondary-color) 0 0 calc(5rem / 16);
 }
 
 .border-3-focus:focus:not([disabled]) {
-  border-width: 0.15em;
   border-style: solid;
-  border-radius: 0.4em;
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(5rem / 16), inset var(--text-secondary-color) 0 0 calc(5rem / 16);
 }
 
-.border-3-disabled:disabled {
-  border-width: 0.15em;
+.border-3-disabled {
+  border-width: calc(3rem / 16);
   border-style: solid;
-  border-radius: 0.4em;
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  border-radius: calc(6rem / 16);
+  box-shadow: currentColor 0 0 calc(3rem / 16), inset currentColor 0 0 calc(3rem / 16);
   border-color: currentColor;
 }
 
@@ -567,31 +572,28 @@ form.login-form1 {
  */
 
 .border-4 {
-  border-width: 0.1em;
+  border-width: calc(1.5rem / 16);
   border-style: solid;
   border-color: var(--text-secondary-color);
-  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 0.5em;
+  box-shadow: hsla(129, 87%, 62%, 0.6) 0 0 0, inset hsla(129, 87%, 62%, 0.6) 0 0 calc(10rem / 16);
 }
 
 .border-4-hover:hover:not([disabled]) {
-  border-width: 0.1em;
   border-style: solid;
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(4em / 16), inset var(--text-secondary-color) 0 0 calc(4em / 16);
 }
 
 .border-4-focus:focus:not([disabled]) {
-  border-width: 0.1em;
   border-style: solid;
   border-color: var(--text-secondary-color);
-  box-shadow: var(--text-secondary-color) 0 0 0.2em, inset var(--text-secondary-color) 0 0 0.2em;
+  box-shadow: var(--text-secondary-color) 0 0 calc(4em / 16), inset var(--text-secondary-color) 0 0 calc(4em / 16);
 }
 
-.border-4-disabled:disabled {
-  border-width: 0.1em;
+.border-4-disabled {
+  border-width: calc(1.5rem / 16);
   border-style: solid;
-  text-shadow: currentColor 0 0 0.1em;
-  box-shadow: currentColor 0 0 0.1em, inset currentColor 0 0 0.1em;
+  box-shadow: currentColor 0 0 calc(2rem / 16), inset currentColor 0 0 calc(2rem / 16);
   border-color: currentColor;
 }
 
@@ -606,6 +608,10 @@ form.login-form1 {
 
 .text-1-1 {
   font-size: 1.1rem;
+}
+
+.text-1-3 {
+  font-size: 1.3rem;
 }
 
 .text-1-5 {
@@ -647,6 +653,14 @@ form.login-form1 {
 }
 
 /*
+ * vertical align
+ */
+
+.align-middle {
+  vertical-align: middle;
+}
+
+/*
  * position
  */
 
@@ -670,8 +684,8 @@ form.login-form1 {
  * height
  */
 
-.height-1-2 {
-  height: 1.2em;
+.height-1-2rem {
+  height: 1.2rem;
 }
 
 /*
@@ -715,35 +729,43 @@ form.login-form1 {
 }
 
 /*
- * button style 2
+ * text shadow
  */
 
-.b2-text-shadow {
-  text-shadow: currentColor 0 0 0.15em;
+.text-shadow-2rpx {
+  text-shadow: currentColor 0 0 calc(2rem / 16);
 }
 
 /*
- * checkmark styles
+ * size
  */
 
-input[type="checkbox"]:checked::after {
+.size-1-5rem {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/*
+ * border-radius
+ */
+
+.border-radius-50 {
+  border-radius: 50%;
+}
+
+/*
+ * checkmark style
+ */
+
+.checkmark-after:checked::after {
   display: block;
   content: "✓";
   text-align: center;
-  color: var(--text-color);
+  color: currentColor;
   font-weight: bold;
   top: 50%;
   left: 50%;
   position: relative;
-  transform: translate(-50%, -50%);
-}
-
-input[type="checkbox"].border-4:checked::after {
-  content: "✓";
-  color: var(--text-color);
-  font-weight: bold;
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
 }
 
@@ -751,40 +773,16 @@ input[type="checkbox"].border-4:checked::after {
  * radio button styles
  */
 
-input[type=radio] {
-  will-change: transform;
-  vertical-align: middle;
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 50%;
-  transition: all 0.3s;
-  margin-right: 0.3em;
-}
-
-input[type=radio]:disabled {
-  will-change: transform;
-  cursor: default;
-  border-radius: 50%;
-  border-color: var(--text-disabled-color);
-  background-color: var(--bg-color-2);
-}
-
-input[type="radio"]:checked::after {
+.radiomark-after:checked::after {
   will-change: transform;
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 0.5em;
-  height: 0.5em;
+  width: 50%;
+  height: 50%;
   border-radius: 50%;
-  background: var(--text-color);
+  background: currentColor;
 }
 
-input[type="radio"] + label {
-  vertical-align: middle;
-}
