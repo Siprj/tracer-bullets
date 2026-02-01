@@ -15,7 +15,7 @@ pub fn Input2(
                 if !disabled {
                     "text-1-1 padding-lr-1 bg-primary border-3 border-3-focus color-primary"
                 } else {
-                    "text-1-1 padding-lr-1 bg-primary input3 border-3-disabled color-disabled-primary"
+                    "text-1-1 padding-lr-1 bg-primary input3 border-3-disabled color-secondary-disabled"
                 }
             }
             disabled=disabled

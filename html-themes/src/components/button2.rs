@@ -8,7 +8,7 @@ pub fn Button2(text: String, #[prop(default = false)] disabled: bool) -> impl In
                 if !disabled {
                     "text-1-1 padding-lr-1 bg-primary border-2 border-2-hover color-secondary color-primary-hover text-shadow-2rpx"
                 } else {
-                    "text-1-1 padding-lr-1 bg-primary border-2-disabled color-disabled-primary text-shadow-2rpx"
+                    "text-1-1 padding-lr-1 bg-primary border-2-disabled color-secondary-disabled text-shadow-2rpx"
                 }
             }
             disabled=disabled
