@@ -2,11 +2,16 @@ use crate::components::button1::Button1;
 use crate::components::button2::Button2;
 use crate::components::button3::Button3;
 use crate::components::button4::Button4;
+use crate::components::checkbox1::Checkbox1;
+use crate::components::checkbox2::Checkbox2;
+use crate::components::checkbox3::Checkbox3;
 use crate::components::input1::Input1;
 use crate::components::input2::Input2;
 use crate::components::input3::Input3;
 use crate::components::label::Label;
 use crate::components::radio1::Radio1;
+use crate::components::radio2::Radio2;
+use crate::components::radio3::Radio3;
 use crate::components::showcase::{Showcase, Showcases};
 use leptos::prelude::*;
 
@@ -279,7 +284,38 @@ pub fn Home() -> impl IntoView {
                         </form>
                     </div>
                 </Showcase>
+
+                <h1>Check boxes</h1>
+
+                <Showcase>
+                    <div class="element">
+                        <Checkbox1 id="checkbox-style1-1".to_string()>
+                            "Checkbox 1"
+                        </Checkbox1>
+                        <Checkbox1 id="checkbox-style1-2".to_string() disabled=true>
+                            "Disabled Checkbox 2"
+                        </Checkbox1>
+                    </div>
+                    <div class="element">
+                        <Checkbox2 id="checkbox-style2-1".to_string()>
+                            "Checkbox 1"
+                        </Checkbox2>
+                        <Checkbox2 id="checkbox-style2-2".to_string() disabled=true>
+                            "Disabled Checkbox 2"
+                        </Checkbox2>
+                    </div>
+                    <div class="element">
+                        <Checkbox3 id="checkbox-style3-1".to_string()>
+                            "Checkbox 1"
+                        </Checkbox3>
+                        <Checkbox3 id="checkbox-style3-2".to_string() disabled=true>
+                            "Disabled Checkbox 2"
+                        </Checkbox3>
+                    </div>
+                </Showcase>
+
                 <h1>Radio buttons</h1>
+
                 <Showcase>
                     <div class="element">
                         <Radio1 id="radio-style1-1".to_string() name="radio-group-1".to_string()>
@@ -288,6 +324,43 @@ pub fn Home() -> impl IntoView {
                         <Radio1 id="radio-style1-2".to_string() name="radio-group-1".to_string()>
                             "Radio 2"
                         </Radio1>
+                        <Radio1
+                            id="radio-style1-3".to_string()
+                            name="radio-group-1".to_string()
+                            disabled=true
+                        >
+                            "Disabled Radio 3"
+                        </Radio1>
+                    </div>
+                    <div class="element">
+                        <Radio2 id="radio-style2-1".to_string() name="radio-group-2".to_string()>
+                            "Radio 1"
+                        </Radio2>
+                        <Radio2 id="radio-style2-2".to_string() name="radio-group-2".to_string()>
+                            "Radio 2"
+                        </Radio2>
+                        <Radio2
+                            id="radio-style1-3".to_string()
+                            name="radio-group-2".to_string()
+                            disabled=true
+                        >
+                            "Disabled Radio 3"
+                        </Radio2>
+                    </div>
+                    <div class="element">
+                        <Radio3 id="radio-style3-1".to_string() name="radio-group-3".to_string()>
+                            "Radio 1"
+                        </Radio3>
+                        <Radio3 id="radio-style3-2".to_string() name="radio-group-3".to_string()>
+                            "Radio 2"
+                        </Radio3>
+                        <Radio3
+                            id="radio-style1-3".to_string()
+                            name="radio-group-3".to_string()
+                            disabled=true
+                        >
+                            "Disabled Radio 3"
+                        </Radio3>
                     </div>
                 </Showcase>
             </Showcases>
