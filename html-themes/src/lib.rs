@@ -7,7 +7,7 @@ mod components;
 mod pages;
 
 // Top-Level pages
-use crate::pages::home::Home;
+use crate::pages::{home::Home, sidebar1::SideBar1};
 
 /// An app router which renders the homepage and handles 404's
 #[component]
@@ -28,6 +28,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=|| view! { NotFound }>
                 <Route path=path!("/") view=Home />
+                <Route path=path!("/sidebar1") view=SideBar1 />
             </Routes>
         </Router>
     }

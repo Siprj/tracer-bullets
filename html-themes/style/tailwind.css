@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@source "*.html";
+@source "./src/**/*.rs";
+
+@theme {
+  --font-sans: Adwaita Sans, Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
+}

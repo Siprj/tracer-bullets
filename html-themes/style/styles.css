@@ -629,6 +629,10 @@ form.login-form1 {
   padding-bottom: 0.4em;
 }
 
+.padding-1em {
+  padding: 1em;
+}
+
 /*
  * display
  */
@@ -673,6 +677,10 @@ form.login-form1 {
   width: 100%;
 }
 
+.width-50 {
+  width: 50%;
+}
+
 .width-1-2 {
   width: 1.2em;
 }
@@ -687,6 +695,10 @@ form.login-form1 {
 
 .height-1-5rem {
   height: 2rem;
+}
+
+.height-800 {
+  height: (800rem / 16);
 }
 
 /*

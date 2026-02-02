@@ -363,6 +363,17 @@ pub fn Home() -> impl IntoView {
                         </Radio3>
                     </div>
                 </Showcase>
+
+                <h1>Sidebars</h1>
+
+                <Showcase>
+                    <div class="element">
+                        <iframe
+                            src="/sidebar1"
+                            class="width-50 height-800 border-1 padding-1em"
+                        ></iframe>
+                    </div>
+                </Showcase>
             </Showcases>
         </ErrorBoundary>
     }
