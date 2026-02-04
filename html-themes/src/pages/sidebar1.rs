@@ -21,9 +21,7 @@ pub fn SideBar1() -> impl IntoView {
 
                 </ul>
             }
-        }>
-            Nice sidebar page coming soon!
-
+        }>Nice sidebar page coming soon!
         </ErrorBoundary>
     }
 }

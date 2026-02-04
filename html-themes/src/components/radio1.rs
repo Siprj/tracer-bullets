@@ -15,15 +15,11 @@ pub fn Radio1(
             name=name
             type="radio"
             class=move || {
-                if !disabled {
-                    "text-1-5 border-2 border-2-hover color-primary text-shadow-2rpx inline-block align-middle size-1-5rem radiomark-after border-radius-50"
-                } else {
-                    "text-1-5 border-2-disabled color-secondary-disabled text-shadow-2rpx align-middle size-1-5rem radiomark-after border-radius-50"
-                }
+                "inline-block appearance-none transition duration-150 ease-linear text-base w-4 h-4 box-content border2 !rounded-full text-primary cursor-pointer text-nowrap disabled:cursor-default disabled:text-secondary-disabled disabled:my-text-shadow radiomark align-middle"
             }
             disabled=disabled
         />
-        <Label for_id=id class:align-middle class:color-primary-disabled=disabled>
+        <Label for_id=id class:align-middle class:text-primary-disabled=disabled>
             {children()}
         </Label>
     }

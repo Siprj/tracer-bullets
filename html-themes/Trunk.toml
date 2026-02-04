@@ -61,4 +61,4 @@ open = false
 [[hooks]]
 stage = "pre_build"
 command = "sh"
-command_arguments = ["-c", "npx tailwindcss -i style/tailwind.css -o style/tailwind-out.css"]
+command_arguments = ["-c", "npx tailwindcss -i style/tailwind.css -o target/css/tailwind-out.css"]

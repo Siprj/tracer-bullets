@@ -13,15 +13,11 @@ pub fn Checkbox2(
             id=id.clone()
             type="checkbox"
             class=move || {
-                if !disabled {
-                    "text-1-3 border-3 border-3-hover color-primary  align-middle size-1-5rem checkmark-after"
-                } else {
-                    "text-1-3 border-3-disabled color-secondary-disabled  align-middle size-1-5rem checkmark-after"
-                }
+                "inline-block appearance-none transition duration-150 ease-linear text-base w-4 h-4 box-content border3 text-primary cursor-pointer text-nowrap disabled:cursor-default disabled:text-secondary-disabled disabled:my-text-shadow checkmark align-middle"
             }
             disabled=disabled
         />
-        <Label for_id=id class:align-middle class:color-primary-disabled=disabled>
+        <Label for_id=id class:align-middle class:text-primary-disabled=disabled>
             {children()}
         </Label>
     }

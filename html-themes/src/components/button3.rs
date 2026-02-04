@@ -5,11 +5,7 @@ pub fn Button3(text: String, #[prop(default = false)] disabled: bool) -> impl In
     view! {
         <button
             class=move || {
-                if !disabled {
-                    "text-1-1 padding-lr-1 bg-primary border-3 border-3-hover color-secondary color-primary-hover"
-                } else {
-                    "text-1-1 padding-lr-1 bg-primary border-3-disabled color-secondary-disabled text-shadow-2rpx"
-                }
+                "transition duration-150 ease-linear text-base px-4 border3 text-secondary cursor-pointer hover:text-primary disabled:cursor-default disabled:text-secondary-disabled disabled:my-text-shadow text-nowrap"
             }
             disabled=disabled
         >

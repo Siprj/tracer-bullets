@@ -3,8 +3,123 @@
 @source "*.html";
 @source "./src/**/*.rs";
 
-@theme {
+@theme static {
   --font-sans: Adwaita Sans, Inter, ui-sans-serif, system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, monospace;
+  --color-bg: hsl(129, 87%, 1.8%);
+  --color-primary: hsl(0, 0%, 100%);
+  --color-primary-disabled: hsl(0, 0%, 50%);
+  --color-secondary: hsl(129, 87%, 62%);
+  --color-secondary-disabled: hsl(129, 87%, 20%);
+}
+
+@layer base {
+  body {
+      background-color: var(--color-bg);
+      color: var(--color-primary);
+      font-family: var(--font-sans);
+  }
+
+  h1 {
+    margin-top: 1.5rem;
+    font-size: var(--text-3xl);
+  }
+
+}
+
+@utility my-text-shadow {
+  text-shadow: currentColor 0 0 calc(2rem / 16);
+}
+
+@layer utilities {
+  .border2 {
+    border-radius: calc(4rem / 16);
+    border-width: calc(3rem / 16);
+    border-style: solid;
+    border-color: var(--color-secondary);
+    box-shadow: var(--color-secondary) 0 0 calc(3rem / 16), inset var(--color-secondary) 0 0 calc(3rem / 16);
+
+    &:hover:not([disabled]) {
+      box-shadow: var(--color-secondary) 0 0 calc(5rem / 16), inset var(--color-secondary) 0 0 calc(5rem / 16);
+    }
+
+    &:disabled {
+      border-color: var(--color-secondary-disabled);
+      box-shadow: var(--color-secondary-disabled) 0 0 calc(2rem / 16), inset var(--color-secondary-disabled) 0 0 calc(2rem / 16);
+    }
+  }
+
+  .border3 {
+    border-width: calc(3rem / 16);
+    border-style: solid;
+    border-radius: calc(6rem / 16);
+    border-color: var(--color-secondary);
+    box-shadow: --alpha(var(--color-secondary) / 60%) 0 0 0, inset --alpha(var(--color-secondary) / 60%) 0 0 calc(10rem / 16);
+
+    &:hover:not([disabled]) {
+      box-shadow: var(--color-secondary) 0 0 calc(5rem / 16), inset var(--color-secondary) 0 0 calc(5rem / 16);
+    }
+
+    &:disabled {
+      border-color: var(--color-secondary-disabled);
+      box-shadow: var(--color-secondary-disabled) 0 0 calc(3rem / 16), inset var(--color-secondary-disabled) 0 0 calc(3rem / 16);
+    }
+  }
+
+  .border4 {
+    border-width: calc(1.5rem / 16);
+    border-style: solid;
+    border-color: var(--color-secondary);
+    box-shadow: --alpha(var(--color-secondary) / 60%) 0 0 0, inset --alpha(var(--color-secondary) / 60%) 0 0 calc(10rem / 16);
+
+    &:hover:not([disabled]) {
+      box-shadow: var(--color-secondary) 0 0 calc(4rem / 16), inset var(--color-secondary) 0 0 calc(4rem / 16);
+    }
+
+    &:disabled {
+      border-color: var(--color-secondary-disabled);
+      box-shadow: var(--color-secondary-disabled) 0 0 calc(2rem / 16), inset var(--color-secondary-disabled) 0 0 calc(2rem / 16);
+    }
+  }
+
+  /* FIXME: These marks look like something that talwind can give me
+   * automatically. I need to investigate later.
+   */
+
+  .checkmark {
+    &:checked::after {
+      display: block;
+      box-sizing: content-box;
+      content: "✓";
+      text-align: center;
+      color: currentColor;
+      font-weight: bold;
+      width: 100%;
+      line-height: 1em;
+      top: 50%;
+      left: 50%;
+      postion: relative;
+    }
+  }
+
+  .radiomark {
+    &:checked::after {
+      will-change: transform;
+      display: block;
+      box-sizing: content-box;
+      content: "";
+      background-color: currentColor;
+      border-radius: 100%;
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      postion: relative;
+      transform: translate(50%, 50%);
+    }
+  }
+}
+
+@layer components {
 }

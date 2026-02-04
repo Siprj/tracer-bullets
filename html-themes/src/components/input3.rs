@@ -12,11 +12,7 @@ pub fn Input3(
             type="input"
             placeholder=placeholder
             class=move || {
-                if !disabled {
-                    "text-1-1 padding-lr-1 bg-primary border-4 border-4-focus color-primary"
-                } else {
-                    "text-1-1 padding-lr-1 bg-primary border-4-disabled color-secondary-disabled"
-                }
+                "outline-none transition duration-150 ease-linear text-base px-4 py-1 border4 text-primary cursor-text text-nowrap disabled:cursor-default disabled:text-secondary-disabled disabled:my-text-shadow"
             }
             disabled=disabled
         />
