@@ -99,7 +99,8 @@
       line-height: 1em;
       top: 50%;
       left: 50%;
-      postion: relative;
+      position: relative;
+      transform: translate(-50%, -50%);
     }
   }
 
@@ -115,8 +116,9 @@
       height: 50%;
       top: 50%;
       left: 50%;
-      postion: relative;
-      transform: translate(50%, 50%);
+      position: relative;
+      transform: translate(-50%, -50%);
+      border-width: 0;
     }
   }
 }
