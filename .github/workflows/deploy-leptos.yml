@@ -1,0 +1,60 @@
+name: Build and Deploy theme examples to GitHub Pages
+
+permissions:
+  pages: write
+  id-token: write
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: x86_64-unknown-linux-gnu, wasm32-unknown-unknown
+
+      - name: Install npm dependencies (tailwindcss)
+        working-directory: ./html-themes
+        run: npm install
+
+      - name: Install Trunk
+        run: |
+          TRUNK_URL=$(curl -s https://api.github.com/repos/trunk-rs/trunk/releases/latest \
+            | jq -r '.assets[] | select(.name | test("trunk-x86_64-unknown-linux-gnu.tar.gz$")) | .browser_download_url')
+          curl -L "$TRUNK_URL" -o trunk.tar.gz
+          tar -xzf trunk.tar.gz
+          chmod +x trunk
+          mkdir -p ~/.local/bin
+          mv trunk ~/.local/bin/
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Leptos project
+        working-directory: ./html-themes
+        run: |
+          trunk build --release --public-url /${{ github.event.repository.name }}/
+
+      - name: Copy the index.html to all routes
+        run: |
+          .github/scripts/copy_index.sh
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: html-themes/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -5,9 +5,11 @@ use leptos_router::{components::*, path};
 // Modules
 mod components;
 mod pages;
+mod base;
 
 // Top-Level pages
 use crate::pages::{home::Home, sidebar1::SideBar1};
+use crate::base::BASE_URL;
 
 /// An app router which renders the homepage and handles 404's
 #[component]
@@ -25,7 +27,7 @@ pub fn App() -> impl IntoView {
         <Meta charset="UTF-8" />
         <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <Router>
+        <Router base=BASE_URL>
             <Routes fallback=|| view! { NotFound }>
                 <Route path=path!("/") view=Home />
                 <Route path=path!("/sidebar1") view=SideBar1 />

@@ -1,3 +1,4 @@
+use crate::base::BASE_URL;
 use crate::components::button1::Button1;
 use crate::components::button2::Button2;
 use crate::components::button3::Button3;
@@ -322,7 +323,7 @@ pub fn Home() -> impl IntoView {
                 <Showcase>
                     <div class="element">
                         <iframe
-                            src="/sidebar1"
+                            src=format!("{}/sidebar1", BASE_URL)
                             class="width-50 height-800 border-1 padding-1em"
                         ></iframe>
                     </div>
