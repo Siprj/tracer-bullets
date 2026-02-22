@@ -321,12 +321,40 @@ pub fn Home() -> impl IntoView {
                 <h1>Sidebars</h1>
 
                 <Showcase>
-                    <div class="element">
+                    <Element>
                         <iframe
                             src=format!("{}/sidebar1", BASE_URL)
-                            class="width-50 height-800 border-1 padding-1em"
+                            class="w-200 h-100 border-1 padding-1em"
                         ></iframe>
-                    </div>
+                    </Element>
+
+                    <Element>
+                        <iframe
+                            src=format!("{}/sidebar2", BASE_URL)
+                            class="w-200 h-100 border-1 padding-1em"
+                        ></iframe>
+                    </Element>
+
+                    <Element>
+                        <iframe
+                            src=format!("{}/sidebar3", BASE_URL)
+                            class="w-200 h-100 border-1 padding-1em"
+                        ></iframe>
+                    </Element>
+
+                    <Element>
+                        <iframe
+                            src=format!("{}/sidebar4", BASE_URL)
+                            class="w-200 h-100 border-1 padding-1em"
+                        ></iframe>
+                    </Element>
+
+                    <Element>
+                        <iframe
+                            src=format!("{}/sidebar5", BASE_URL)
+                            class="w-200 h-100 border-1 padding-1em"
+                        ></iframe>
+                    </Element>
                 </Showcase>
             </Showcases>
         </ErrorBoundary>

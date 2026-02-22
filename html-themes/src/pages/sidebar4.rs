@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use crate::components::sidebar1::SideBar;
+use crate::components::sidebar4::SideBar;
 
 /// Default Home Page
 #[component]

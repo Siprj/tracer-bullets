@@ -13,3 +13,8 @@ pub mod radio1;
 pub mod radio2;
 pub mod radio3;
 pub mod showcase;
+pub mod sidebar1;
+pub mod sidebar2;
+pub mod sidebar3;
+pub mod sidebar4;
+pub mod sidebar5;
