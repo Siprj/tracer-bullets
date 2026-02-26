@@ -132,6 +132,10 @@
       border-width: 0;
     }
   }
+
+  .bg-test {
+      background-color: #0a0a0a;
+  }
 }
 
 @layer components {

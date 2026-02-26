@@ -24,14 +24,16 @@ pub fn SideBarPage() -> impl IntoView {
                 </ul>
             }
         }>
-          <SideBar>
-            <Menu>
-              <MenuItem>"Sidebar Item 1"</MenuItem>
-              <MenuItem>"Sidebar Item 2"</MenuItem>
-              <MenuItem>"Sidebar Item 3"</MenuItem>
-              <MenuItem>"Sidebar Item 4"</MenuItem>
-            </Menu>
-          </SideBar>
+          <div class="bg-[rgba(0,0,0,0.9)] w-full h-screen">
+            <SideBar class:bg-test>
+              <Menu>
+                <MenuItem>"Sidebar Item 1"</MenuItem>
+                <MenuItem>"Sidebar Item 2"</MenuItem>
+                <MenuItem>"Sidebar Item 3"</MenuItem>
+                <MenuItem>"Sidebar Item 4"</MenuItem>
+              </Menu>
+            </SideBar>
+          </div>
         </ErrorBoundary>
     }
 }

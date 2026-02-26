@@ -35,6 +35,7 @@ pub fn App() -> impl IntoView {
                 <Route path=path!("/sidebar3") view=pages::sidebar3::SideBarPage />
                 <Route path=path!("/sidebar4") view=pages::sidebar4::SideBarPage />
                 <Route path=path!("/sidebar5") view=pages::sidebar5::SideBarPage />
+                <Route path=path!("/sidebar6") view=pages::sidebar6::SideBarPage />
             </Routes>
         </Router>
     }

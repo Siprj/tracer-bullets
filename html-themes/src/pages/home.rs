@@ -355,6 +355,12 @@ pub fn Home() -> impl IntoView {
                             class="w-200 h-100 border-1 padding-1em"
                         ></iframe>
                     </Element>
+                    <Element>
+                        <iframe
+                            src=format!("{}/sidebar6", BASE_URL)
+                            class="w-200 h-100 border-1 padding-1em"
+                        ></iframe>
+                    </Element>
                 </Showcase>
             </Showcases>
         </ErrorBoundary>

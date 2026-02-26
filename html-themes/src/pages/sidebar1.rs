@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use crate::components::sidebar1::SideBar;
+use crate::components::{sidebar_menu::{Menu, MenuItem}, sidebar1::SideBar};
 
 /// Default Home Page
 #[component]
@@ -25,12 +25,12 @@ pub fn SideBarPage() -> impl IntoView {
             }
         }>
           <SideBar>
-            <ul>
-              <li>"Sidebar Item 1"</li>
-              <li>"Sidebar Item 2"</li>
-              <li>"Sidebar Item 3"</li>
-              <li>"Sidebar Item 4"</li>
-            </ul>
+            <Menu>
+              <MenuItem>"Sidebar Item 1"</MenuItem>
+              <MenuItem>"Sidebar Item 2"</MenuItem>
+              <MenuItem>"Sidebar Item 3"</MenuItem>
+              <MenuItem>"Sidebar Item 4"</MenuItem>
+            </Menu>
           </SideBar>
         </ErrorBoundary>
     }

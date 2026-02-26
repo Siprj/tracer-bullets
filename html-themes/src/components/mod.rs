@@ -18,3 +18,4 @@ pub mod sidebar2;
 pub mod sidebar3;
 pub mod sidebar4;
 pub mod sidebar5;
+pub mod sidebar_menu;
