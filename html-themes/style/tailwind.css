@@ -3,6 +3,7 @@
 @source "*.html";
 @source "./src/**/*.rs";
 
+
 @theme static {
   --font-sans: Adwaita Sans, Inter, ui-sans-serif, system-ui, sans-serif;
   --font-serif: Georgia, serif;

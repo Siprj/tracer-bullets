@@ -2,7 +2,7 @@ use leptos::prelude::*;
 
 #[component]
 pub fn Menu(children: Children) -> impl IntoView {
-    view! { <ul class="space-y-2 font-medium px-3 py-3 list-inside list-disc">{children()}</ul> }
+    view! { <ul class="space-y-2 font-medium px-3 py-3 list-inside">{children()}</ul> }
 }
 
 #[component]
