@@ -1,7 +1,8 @@
+use icondata::{FaBarsSolid, FaBatteryEmptySolid, FaGearsSolid, FaTerminalSolid, FaUserRegular};
 use leptos::prelude::*;
 
 use crate::components::{
-    sidebar_menu::{Menu, MenuItem},
+    sidebar_menu::{Menu, MenuItem, SubMenu},
     sidebar3::SideBar,
 };
 
@@ -41,10 +42,19 @@ pub fn SideBarPage() -> impl IntoView {
                     </span>
                 </div>
                 <Menu>
-                    <MenuItem>"Sidebar Item 1"</MenuItem>
-                    <MenuItem>"Sidebar Item 2"</MenuItem>
-                    <MenuItem>"Sidebar Item 3"</MenuItem>
-                    <MenuItem>"Sidebar Item 4"</MenuItem>
+                    <MenuItem icon=FaUserRegular text="User".into() path="/user".into()/>
+                    <MenuItem icon=FaGearsSolid text="Settings".into() path="/settings".into()/>
+                    <MenuItem icon=FaTerminalSolid text="Terminal".into() path="/terminal".into()/>
+                    <SubMenu icon=FaBarsSolid text="Sub Menu".into()>
+                        <MenuItem icon=FaBatteryEmptySolid text="Sub Item 1".into() path="/sub-item-1".into()/>
+                        <MenuItem icon=FaBatteryEmptySolid text="Sub Item 2".into() path="/sub-item-2".into()/>
+                        <MenuItem icon=FaBatteryEmptySolid text="Sub Item 3".into() path="/sub-item-3".into()/>
+                        <SubMenu icon=FaBarsSolid text="Sub Menu deeper".into()>
+                            <MenuItem icon=FaBatteryEmptySolid text="Sub Item 4".into() path="/sub-item-4".into()/>
+                            <MenuItem icon=FaBatteryEmptySolid text="Sub Item 5".into() path="/sub-item-5".into()/>
+                            <MenuItem icon=FaBatteryEmptySolid text="Sub Item 6".into() path="/sub-item-6".into()/>
+                        </SubMenu>
+                    </SubMenu>
                 </Menu>
             </SideBar>
         </ErrorBoundary>
