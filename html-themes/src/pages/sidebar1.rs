@@ -1,8 +1,8 @@
-use icondata::{FaBarsSolid, FaBatteryEmptySolid, FaGearsSolid, FaTerminalSolid, FaUserRegular};
+use icondata::{FaBarsSolid, FaBatteryEmptySolid, FaGearsSolid, FaTerminalSolid, FaUserLargeSolid, FaUserRegular};
 use leptos::prelude::*;
 
 use crate::components::{
-    sidebar_menu::{Menu, MenuItem, SubMenu},
+    sidebar_menu::{Menu, MenuItem, SubMenu, UserMenu},
     sidebar1::SideBar,
 };
 
@@ -42,7 +42,7 @@ pub fn SideBarPage() -> impl IntoView {
                     </span>
                 </div>
                 <Menu>
-                    <MenuItem icon=FaUserRegular text="User".into() path="/user".into()/>
+                    <MenuItem icon=FaUserRegular text="Users".into() path="/users".into()/>
                     <MenuItem icon=FaGearsSolid text="Settings".into() path="/settings".into()/>
                     <MenuItem icon=FaTerminalSolid text="Terminal".into() path="/terminal".into()/>
                     <SubMenu icon=FaBarsSolid text="Sub Menu".into()>
@@ -56,6 +56,9 @@ pub fn SideBarPage() -> impl IntoView {
                         </SubMenu>
                     </SubMenu>
                 </Menu>
+                <div class="border2-sidebar border-t-[calc(3rem_/_16)]">
+                    <UserMenu icon=FaUserLargeSolid text="John Connor".into() path="/user".into() />
+                </div>
             </SideBar>
         </ErrorBoundary>
     }

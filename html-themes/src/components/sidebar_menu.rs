@@ -5,7 +5,9 @@ use leptos_router::components::A;
 
 #[component]
 pub fn Menu(children: Children) -> impl IntoView {
-    view! { <ul class="space-y-2 font-medium px-3 py-3 list-inside">{children()}</ul> }
+    view! {
+        <ul class="space-y-2 font-medium px-3 py-3 list-inside h-full overflow-y-auto">{children()} </ul>
+    }
 }
 
 #[component]
@@ -34,7 +36,9 @@ where
                     <Icon icon=icon />
                     <span>{text}</span>
                 </span>
-                <span>{move || if is_expanded.get() { "▼" } else { "▶" }}</span>
+                <span
+                    class={move || format!("transition-transform duration-200 {}", if is_expanded.get() { "rotate-90" } else { "" })}
+                >"▶"</span>
             </button>
         </li>
         <ul class="space-y-2 font-medium px-3 list-inside">
@@ -43,5 +47,15 @@ where
                 {children()}
             </Show>
         </ul>
+    }
+}
+
+#[component]
+pub fn UserMenu(icon: icondata::Icon, text: String, path: String) -> impl IntoView {
+    view! {
+        <A href=path attr:class="text-xl font-medium px-3 py-3 mt-auto w-full flex items-center gap-2" >
+            <Icon icon=icon />
+            <span>{text}</span>
+        </A>
     }
 }

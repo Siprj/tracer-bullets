@@ -126,7 +126,7 @@ pub fn Home() -> impl IntoView {
                                     id="email".to_string()
                                     placeholder="john@gmail.com".to_string()
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line">
@@ -139,7 +139,7 @@ pub fn Home() -> impl IntoView {
                                     {..}
                                     type="password"
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line text-right">
@@ -158,7 +158,7 @@ pub fn Home() -> impl IntoView {
                                     id="email".to_string()
                                     placeholder="john@gmail.com".to_string()
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line">
@@ -171,7 +171,7 @@ pub fn Home() -> impl IntoView {
                                     {..}
                                     type="password"
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line text-right">
@@ -190,7 +190,7 @@ pub fn Home() -> impl IntoView {
                                     id="email".to_string()
                                     placeholder="john@gmail.com".to_string()
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line">
@@ -203,7 +203,7 @@ pub fn Home() -> impl IntoView {
                                     {..}
                                     type="password"
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line text-right">
@@ -222,7 +222,7 @@ pub fn Home() -> impl IntoView {
                                     id="email".to_string()
                                     placeholder="john@gmail.com".to_string()
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line">
@@ -235,7 +235,7 @@ pub fn Home() -> impl IntoView {
                                     {..}
                                     type="password"
                                     class:padding-tb-0-4
-                                    class:width-100
+                                    class:w-full
                                 />
                             </div>
                             <div class="form-line text-right">
